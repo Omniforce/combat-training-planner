@@ -12,31 +12,25 @@ export default function StepCard({ step, index }) {
     <div className="step-card">
       <div className="step-header">
         <span className="step-number">Step {index + 1}</span>
-        <span className="step-skill" style={{ color: SKILL_COLORS[step.skill] }}>
-          {capitalize(step.skill)}
-        </span>
-        <span className="step-levels">
-          {step.fromLevel} &rarr; {step.toLevel}
-        </span>
+        <span className="step-weapon">{step.weapon}</span>
+        <span className="step-stance">{step.style} ({capitalize(step.stance)})</span>
         <span className="step-time">{formatTime(step.hours)}</span>
       </div>
       <div className="step-details">
         <div className="step-info">
           <div className="step-row">
-            <span className="detail-label">Weapon:</span>
-            <span>{step.weapon}</span>
-          </div>
-          <div className="step-row">
-            <span className="detail-label">Style:</span>
-            <span>{step.style} ({capitalize(step.stance)})</span>
-          </div>
-          <div className="step-row">
-            <span className="detail-label">Monster:</span>
-            <span>{step.monster}</span>
+            <span className="detail-label">Training:</span>
+            <span className="step-skill" style={{ color: SKILL_COLORS[step.skill] }}>
+              {capitalize(step.skill)} {step.fromLevel} &rarr; {step.toLevel}
+            </span>
           </div>
           <div className="step-row">
             <span className="detail-label">XP/hr:</span>
             <span>{formatNumber(step.xpPerHour)}</span>
+          </div>
+          <div className="step-row">
+            <span className="detail-label">XP needed:</span>
+            <span>{formatNumber(step.xpNeeded)}</span>
           </div>
           <div className="step-row">
             <span className="detail-label">Max Hit:</span>
@@ -45,10 +39,6 @@ export default function StepCard({ step, index }) {
           <div className="step-row">
             <span className="detail-label">Accuracy:</span>
             <span>{formatPercent(step.accuracy)}</span>
-          </div>
-          <div className="step-row">
-            <span className="detail-label">XP needed:</span>
-            <span>{formatNumber(step.xpNeeded)}</span>
           </div>
         </div>
         <GearLoadout gear={step.gear} />

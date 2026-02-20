@@ -74,14 +74,20 @@
   text-transform: uppercase;
 }
 
-.step-skill {
+.step-weapon {
   font-weight: 700;
   font-size: 14px;
+  color: var(--text-primary);
 }
 
-.step-levels {
-  font-size: 14px;
+.step-stance {
+  font-size: 13px;
   color: var(--text-secondary);
+}
+
+.step-skill {
+  font-weight: 600;
+  font-size: 13px;
 }
 
 .step-time {
