@@ -1,123 +1,526 @@
 import weapons from '../data/weapons.json';
+import armorData from '../data/armor.json';
 import monsters from '../data/monsters.json';
 import { xpForLevel, levelForXp } from './xp.js';
-import { canEquipWeapon, solveBestGear, evaluateSetup } from './gear-solver.js';
+import { canEquipWeapon, solveBestGear, sumGearBonuses } from './gear-solver.js';
+import { calculateCombatStats } from './combat.js';
 
 const SKILLS = ['attack', 'strength', 'defence'];
 const DEFAULT_MONSTER = monsters.find(m => m.name === 'Gemstone Crab') || monsters[0];
 
-/**
- * Find the best weapon + style + gear for training a given skill at current levels.
- * Returns the setup with highest effective XP/hr for that skill.
- */
-function findBestSetup(skill, levels, equipSet, availableWeapons) {
-  let bestResult = null;
+/* ─── MinHeap ─── */
 
-  for (const weapon of availableWeapons) {
-    if (!canEquipWeapon(weapon, levels)) continue;
-    if (!equipSet.has(weapon.name)) continue;
+class MinHeap {
+  constructor() { this.data = []; }
 
-    const validStyles = weapon.styles.filter(s =>
-      s.skill === skill || s.skill === 'shared'
-    );
+  push(item) {
+    this.data.push(item);
+    this._up(this.data.length - 1);
+  }
 
-    for (const style of validStyles) {
-      const gear = solveBestGear({
-        weapon,
-        style,
-        levels,
-        monster: DEFAULT_MONSTER,
-        availableEquipment: equipSet,
-      });
+  pop() {
+    const top = this.data[0];
+    const last = this.data.pop();
+    if (this.data.length > 0) {
+      this.data[0] = last;
+      this._down(0);
+    }
+    return top;
+  }
 
-      const stats = evaluateSetup({
-        weapon,
-        style,
-        gear,
-        levels,
-        monster: DEFAULT_MONSTER,
-      });
+  get size() { return this.data.length; }
 
-      // Shared (controlled) splits XP 3 ways
-      const effectiveXphr = style.skill === 'shared'
-        ? stats.xpPerHour / 3
-        : stats.xpPerHour;
-
-      if (!bestResult || effectiveXphr > bestResult.xpPerHour) {
-        bestResult = {
-          weapon,
-          style,
-          gear,
-          stats,
-          xpPerHour: effectiveXphr,
-          isShared: style.skill === 'shared',
-        };
-      }
+  _up(i) {
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (this.data[p].cost <= this.data[i].cost) break;
+      [this.data[p], this.data[i]] = [this.data[i], this.data[p]];
+      i = p;
     }
   }
 
-  return bestResult;
+  _down(i) {
+    const n = this.data.length;
+    while (true) {
+      let smallest = i;
+      const l = 2 * i + 1, r = 2 * i + 2;
+      if (l < n && this.data[l].cost < this.data[smallest].cost) smallest = l;
+      if (r < n && this.data[r].cost < this.data[smallest].cost) smallest = r;
+      if (smallest === i) break;
+      [this.data[smallest], this.data[i]] = [this.data[i], this.data[smallest]];
+      i = smallest;
+    }
+  }
 }
 
-/**
- * Compute the best possible DPS at given levels (using any weapon/style combo).
- * Used by the lookahead to evaluate which skill level-up helps future training most.
- */
-function bestDpsAtLevels(levels, equipSet, availableWeapons) {
-  let best = 0;
+/* ─── Gear Precomputation Cache ─── */
 
-  for (const weapon of availableWeapons) {
-    if (!canEquipWeapon(weapon, levels)) continue;
-    if (!equipSet.has(weapon.name)) continue;
+function collectThresholds(equipSet) {
+  const atkSet = new Set();
+  const defSet = new Set();
 
-    for (const style of weapon.styles) {
-      const gear = solveBestGear({
-        weapon,
-        style,
-        levels,
-        monster: DEFAULT_MONSTER,
-        availableEquipment: equipSet,
-      });
+  for (const w of weapons) {
+    if (!equipSet.has(w.name)) continue;
+    atkSet.add(w.requirements?.attack || 1);
+  }
 
-      const stats = evaluateSetup({
-        weapon,
-        style,
-        gear,
-        levels,
-        monster: DEFAULT_MONSTER,
-      });
-
-      if (stats.dps > best) {
-        best = stats.dps;
-      }
+  for (const slot of Object.values(armorData)) {
+    for (const item of slot) {
+      if (!equipSet.has(item.name)) continue;
+      defSet.add(item.requirements?.defence || 1);
     }
   }
 
+  atkSet.add(1);
+  defSet.add(1);
+
+  return {
+    atkThresholds: [...atkSet].sort((a, b) => a - b),
+    defThresholds: [...defSet].sort((a, b) => a - b),
+  };
+}
+
+function getThresholdLevel(level, thresholds) {
+  let best = thresholds[0];
+  for (const t of thresholds) {
+    if (t <= level) best = t;
+    else break;
+  }
   return best;
 }
 
-/**
- * Create a key for detecting when gear/style changes between steps.
- */
-function setupKey(skill, setup) {
-  const gearNames = Object.values(setup.gear)
-    .map(item => item ? item.name : '')
-    .join(',');
-  return `${skill}|${setup.weapon.name}|${setup.style.name}|${gearNames}`;
+function buildGearCache(equipSet, availableWeapons) {
+  const { atkThresholds, defThresholds } = collectThresholds(equipSet);
+  const cache = new Map();
+
+  for (const atkT of atkThresholds) {
+    for (const defT of defThresholds) {
+      const key = `${atkT},${defT}`;
+      const entries = [];
+      const levels = { attack: atkT, strength: 1, defence: defT };
+
+      for (const weapon of availableWeapons) {
+        if (!canEquipWeapon(weapon, levels)) continue;
+
+        for (const style of weapon.styles) {
+          const gear = solveBestGear({
+            weapon, style, levels,
+            monster: DEFAULT_MONSTER,
+            availableEquipment: equipSet,
+          });
+
+          const attackType = style.type;
+          const bonuses = sumGearBonuses(gear, attackType);
+
+          let weaponAttackBonus = 0;
+          if (attackType === 'stab') weaponAttackBonus = weapon.attackStab || 0;
+          else if (attackType === 'slash') weaponAttackBonus = weapon.attackSlash || 0;
+          else if (attackType === 'crush') weaponAttackBonus = weapon.attackCrush || 0;
+
+          const countObs = Object.values(gear).filter(g => g && g.isObsidian).length;
+
+          entries.push({
+            weapon,
+            style,
+            gear,
+            equipAttackBonus: bonuses.attackBonus + weaponAttackBonus,
+            equipStrengthBonus: bonuses.strengthBonus + (weapon.strengthBonus || 0),
+            attackSpeed: weapon.attackSpeed,
+            attackType,
+            isObsidianSet: countObs >= 3,
+            hasBerserkerNecklace: !!(gear.neck && gear.neck.isObsidian),
+            isObsidianWeapon: weapon.isObsidian || false,
+          });
+        }
+      }
+
+      cache.set(key, entries);
+    }
+  }
+
+  return { cache, atkThresholds, defThresholds };
 }
 
+/* ─── Fast Cached DPS Evaluation ─── */
+
+function findBestSetupCached(skill, levels, gearCache) {
+  const atkT = getThresholdLevel(levels.attack, gearCache.atkThresholds);
+  const defT = getThresholdLevel(levels.defence, gearCache.defThresholds);
+  const entries = gearCache.cache.get(`${atkT},${defT}`) || [];
+
+  let bestXphr = 0;
+  let bestEntry = null;
+
+  for (const entry of entries) {
+    if (entry.style.skill !== skill && entry.style.skill !== 'shared') continue;
+    if (!canEquipWeapon(entry.weapon, levels)) continue;
+
+    const stats = calculateCombatStats({
+      attackLevel: levels.attack,
+      strengthLevel: levels.strength,
+      stance: entry.style.stance,
+      equipAttackBonus: entry.equipAttackBonus,
+      equipStrengthBonus: entry.equipStrengthBonus,
+      attackSpeed: entry.attackSpeed,
+      monster: DEFAULT_MONSTER,
+      attackType: entry.attackType,
+      isObsidianSet: entry.isObsidianSet,
+      hasBerserkerNecklace: entry.hasBerserkerNecklace,
+      isObsidianWeapon: entry.isObsidianWeapon,
+    });
+
+    const effectiveXphr = entry.style.skill === 'shared'
+      ? stats.xpPerHour / 3
+      : stats.xpPerHour;
+
+    if (effectiveXphr > bestXphr) {
+      bestXphr = effectiveXphr;
+      bestEntry = { ...entry, stats, xpPerHour: effectiveXphr, isShared: entry.style.skill === 'shared' };
+    }
+  }
+
+  return bestEntry;
+}
+
+function findBestControlledCached(levels, gearCache) {
+  const atkT = getThresholdLevel(levels.attack, gearCache.atkThresholds);
+  const defT = getThresholdLevel(levels.defence, gearCache.defThresholds);
+  const entries = gearCache.cache.get(`${atkT},${defT}`) || [];
+
+  let bestXphr = 0;
+  let bestEntry = null;
+
+  for (const entry of entries) {
+    if (entry.style.skill !== 'shared') continue;
+    if (!canEquipWeapon(entry.weapon, levels)) continue;
+
+    const stats = calculateCombatStats({
+      attackLevel: levels.attack,
+      strengthLevel: levels.strength,
+      stance: entry.style.stance,
+      equipAttackBonus: entry.equipAttackBonus,
+      equipStrengthBonus: entry.equipStrengthBonus,
+      attackSpeed: entry.attackSpeed,
+      monster: DEFAULT_MONSTER,
+      attackType: entry.attackType,
+      isObsidianSet: entry.isObsidianSet,
+      hasBerserkerNecklace: entry.hasBerserkerNecklace,
+      isObsidianWeapon: entry.isObsidianWeapon,
+    });
+
+    const perSkillXphr = stats.xpPerHour / 3;
+    if (perSkillXphr > bestXphr) {
+      bestXphr = perSkillXphr;
+      bestEntry = { ...entry, stats, xpPerHour: perSkillXphr, totalXpPerHour: stats.xpPerHour };
+    }
+  }
+
+  return bestEntry;
+}
+
+/* ─── Controlled Block Simulation ─── */
+
 /**
- * Main optimizer: compute the optimal training path.
- *
- * Lookahead greedy approach:
- * 1. Separate offensive skills (Attack, Strength) from Defence.
- * 2. Train Attack/Strength first using DPS lookahead:
- *    - For each, simulate gaining 1 level and compute resulting best DPS.
- *    - Pick the skill whose level-up yields the highest future DPS.
- *    - Ties broken: Strength > Attack (str affects max hit more directly).
- * 3. Once Attack and Strength goals are met, train Defence.
- * 4. Merge consecutive identical steps.
+ * Simulate controlled training from a starting state with proper XP carry-over.
+ * Advances all below-goal skills equally until fewer than 2 skills remain below goal.
+ * Returns the accurate final levels and total training hours.
  */
+function simulateControlledBlock(startA, startS, startD, goalA, goalS, goalD, gearCache) {
+  const simXp = {
+    attack: xpForLevel(startA),
+    strength: xpForLevel(startS),
+    defence: xpForLevel(startD),
+  };
+  const goals = { attack: goalA, strength: goalS, defence: goalD };
+  let totalHours = 0;
+
+  while (true) {
+    const simLevels = {
+      attack: levelForXp(simXp.attack),
+      strength: levelForXp(simXp.strength),
+      defence: levelForXp(simXp.defence),
+    };
+
+    const advancing = SKILLS.filter(sk => simLevels[sk] < goals[sk]);
+    if (advancing.length < 2) break;
+
+    // Bottleneck: skill needing the most XP to reach its next level from current XP
+    let maxXpNeeded = 0;
+    for (const sk of advancing) {
+      const needed = xpForLevel(simLevels[sk] + 1) - simXp[sk];
+      if (needed > maxXpNeeded) maxXpNeeded = needed;
+    }
+
+    const controlled = findBestControlledCached(simLevels, gearCache);
+    if (!controlled || controlled.xpPerHour <= 0) break;
+
+    totalHours += maxXpNeeded / controlled.xpPerHour;
+
+    for (const sk of advancing) {
+      simXp[sk] += maxXpNeeded;
+    }
+  }
+
+  const finalLevels = {
+    attack: Math.min(levelForXp(simXp.attack), goalA),
+    strength: Math.min(levelForXp(simXp.strength), goalS),
+    defence: Math.min(levelForXp(simXp.defence), goalD),
+  };
+
+  return { finalLevels, totalHours };
+}
+
+/* ─── 3D Dijkstra ─── */
+
+function dijkstra(startLevels, goalLevels, gearCache) {
+  const sa = startLevels.attack, ss = startLevels.strength, sd = startLevels.defence;
+  const ga = goalLevels.attack, gs = goalLevels.strength, gd = goalLevels.defence;
+
+  const sizeA = ga - sa + 1;
+  const sizeS = gs - ss + 1;
+  const sizeD = gd - sd + 1;
+  const totalStates = sizeA * sizeS * sizeD;
+
+  const idx = (a, s, d) => (a - sa) * sizeS * sizeD + (s - ss) * sizeD + (d - sd);
+
+  const dist = new Float64Array(totalStates);
+  dist.fill(Infinity);
+
+  // prev stores: [fromA, fromS, fromD, transitionType]
+  // transitionType: 0=attack, 1=strength, 2=defence, 3=controlled block
+  const prev = new Array(totalStates).fill(null);
+
+  const startIdx = idx(sa, ss, sd);
+  dist[startIdx] = 0;
+
+  const heap = new MinHeap();
+  heap.push({ cost: 0, a: sa, s: ss, d: sd });
+
+  const goalIdx = idx(ga, gs, gd);
+
+  while (heap.size > 0) {
+    const { cost, a, s, d } = heap.pop();
+    const ci = idx(a, s, d);
+
+    if (ci === goalIdx) break;
+    if (cost > dist[ci]) continue;
+
+    const levels = { attack: a, strength: s, defence: d };
+
+    // Transition 1: Train attack (a -> a+1)
+    if (a < ga) {
+      const setup = findBestSetupCached('attack', levels, gearCache);
+      if (setup && setup.xpPerHour > 0) {
+        const xpNeeded = xpForLevel(a + 1) - xpForLevel(a);
+        const edgeCost = xpNeeded / setup.xpPerHour;
+        const ni = idx(a + 1, s, d);
+        const newCost = cost + edgeCost;
+        if (newCost < dist[ni]) {
+          dist[ni] = newCost;
+          prev[ni] = [a, s, d, 0];
+          heap.push({ cost: newCost, a: a + 1, s, d });
+        }
+      }
+    }
+
+    // Transition 2: Train strength (s -> s+1)
+    if (s < gs) {
+      const setup = findBestSetupCached('strength', levels, gearCache);
+      if (setup && setup.xpPerHour > 0) {
+        const xpNeeded = xpForLevel(s + 1) - xpForLevel(s);
+        const edgeCost = xpNeeded / setup.xpPerHour;
+        const ni = idx(a, s + 1, d);
+        const newCost = cost + edgeCost;
+        if (newCost < dist[ni]) {
+          dist[ni] = newCost;
+          prev[ni] = [a, s, d, 1];
+          heap.push({ cost: newCost, a, s: s + 1, d });
+        }
+      }
+    }
+
+    // Transition 3: Train defence (d -> d+1)
+    if (d < gd) {
+      const setup = findBestSetupCached('defence', levels, gearCache);
+      if (setup && setup.xpPerHour > 0) {
+        const xpNeeded = xpForLevel(d + 1) - xpForLevel(d);
+        const edgeCost = xpNeeded / setup.xpPerHour;
+        const ni = idx(a, s, d + 1);
+        const newCost = cost + edgeCost;
+        if (newCost < dist[ni]) {
+          dist[ni] = newCost;
+          prev[ni] = [a, s, d, 2];
+          heap.push({ cost: newCost, a, s, d: d + 1 });
+        }
+      }
+    }
+
+    // Transition 4: Controlled block — simulate full controlled training with XP carry-over
+    // This avoids the cumulative carry-over loss that per-step controlled transitions suffer.
+    const advancing = [];
+    if (a < ga) advancing.push('attack');
+    if (s < gs) advancing.push('strength');
+    if (d < gd) advancing.push('defence');
+
+    if (advancing.length >= 2) {
+      const block = simulateControlledBlock(a, s, d, ga, gs, gd, gearCache);
+      if (block.totalHours > 0) {
+        const { attack: fa, strength: fs, defence: fd } = block.finalLevels;
+        if (fa > a || fs > s || fd > d) {
+          const ni = idx(fa, fs, fd);
+          const newCost = cost + block.totalHours;
+          if (newCost < dist[ni]) {
+            dist[ni] = newCost;
+            prev[ni] = [a, s, d, 3];
+            heap.push({ cost: newCost, a: fa, s: fs, d: fd });
+          }
+        }
+      }
+    }
+  }
+
+  // Reconstruct path
+  if (dist[goalIdx] === Infinity) return null;
+
+  const path = [];
+  let ca = ga, cs = gs, cd = gd;
+
+  while (ca !== sa || cs !== ss || cd !== sd) {
+    const ci = idx(ca, cs, cd);
+    const [pa, ps, pd, type] = prev[ci];
+    path.push({ fromA: pa, fromS: ps, fromD: pd, toA: ca, toS: cs, toD: cd, type });
+    ca = pa;
+    cs = ps;
+    cd = pd;
+  }
+
+  path.reverse();
+  return { path, totalCost: dist[goalIdx] };
+}
+
+/* ─── Path to Steps ─── */
+
+function pathToSteps(path, startLevels, goalLevels, gearCache) {
+  const simXp = {
+    attack: xpForLevel(startLevels.attack),
+    strength: xpForLevel(startLevels.strength),
+    defence: xpForLevel(startLevels.defence),
+  };
+  const simLevels = { ...startLevels };
+  const rawSteps = [];
+  const TRANSITION_SKILLS = ['attack', 'strength', 'defence'];
+
+  for (const edge of path) {
+    if (edge.type === 3) {
+      // Controlled block — expand into per-bottleneck-level steps with XP carry-over
+      const goals = { attack: edge.toA, strength: edge.toS, defence: edge.toD };
+
+      while (true) {
+        const advancing = SKILLS.filter(sk => simLevels[sk] < goals[sk]);
+        if (advancing.length < 2) break;
+
+        const levels = { ...simLevels };
+        const controlled = findBestControlledCached(levels, gearCache);
+        if (!controlled) break;
+
+        // Bottleneck: skill needing the most XP from its current actual XP
+        let maxXpNeeded = 0;
+        for (const sk of advancing) {
+          const needed = xpForLevel(simLevels[sk] + 1) - simXp[sk];
+          if (needed > maxXpNeeded) maxXpNeeded = needed;
+        }
+
+        const hours = maxXpNeeded / controlled.xpPerHour;
+
+        const fromLevels = {};
+        for (const sk of advancing) fromLevels[sk] = simLevels[sk];
+
+        // Advance XP equally with carry-over
+        for (const sk of advancing) {
+          simXp[sk] += maxXpNeeded;
+          simLevels[sk] = levelForXp(simXp[sk]);
+        }
+
+        const toLevels = {};
+        for (const sk of advancing) toLevels[sk] = simLevels[sk];
+
+        // Primary skill = the bottleneck (highest level)
+        let primarySkill = advancing[0];
+        let primaryLvl = 0;
+        for (const sk of advancing) {
+          if (levels[sk] > primaryLvl) {
+            primaryLvl = levels[sk];
+            primarySkill = sk;
+          }
+        }
+
+        rawSteps.push({
+          skill: 'shared',
+          fromLevel: fromLevels[primarySkill],
+          toLevel: toLevels[primarySkill],
+          fromLevels,
+          toLevels,
+          advancingSkills: advancing,
+          xpNeeded: maxXpNeeded,
+          xpPerHour: controlled.xpPerHour,
+          hours,
+          weapon: controlled.weapon.name,
+          style: controlled.style.name,
+          stance: controlled.style.stance,
+          gear: formatGear(controlled.gear),
+          maxHit: controlled.stats.maxHit,
+          accuracy: controlled.stats.accuracy,
+          dps: controlled.stats.dps,
+          _key: setupKey('shared', controlled),
+        });
+      }
+    } else {
+      // Single-skill transition
+      const levels = { attack: edge.fromA, strength: edge.fromS, defence: edge.fromD };
+      const skill = TRANSITION_SKILLS[edge.type];
+      const setup = findBestSetupCached(skill, levels, gearCache);
+      if (!setup) continue;
+
+      const fromLevel = simLevels[skill];
+      const toLevel = fromLevel + 1;
+      const xpNeeded = xpForLevel(toLevel) - simXp[skill];
+      const hours = xpNeeded / setup.xpPerHour;
+
+      rawSteps.push({
+        skill,
+        fromLevel,
+        toLevel,
+        xpNeeded,
+        xpPerHour: setup.xpPerHour,
+        hours,
+        weapon: setup.weapon.name,
+        style: setup.style.name,
+        stance: setup.style.stance,
+        gear: formatGear(setup.gear),
+        maxHit: setup.stats.maxHit,
+        accuracy: setup.stats.accuracy,
+        dps: setup.stats.dps,
+        _key: setupKey(skill, setup),
+      });
+
+      if (setup.isShared) {
+        const xpEach = xpNeeded;
+        for (const s of SKILLS) {
+          simXp[s] += xpEach;
+          simLevels[s] = levelForXp(simXp[s]);
+        }
+      } else {
+        simXp[skill] += xpNeeded;
+        simLevels[skill] = toLevel;
+      }
+    }
+  }
+
+  return { rawSteps, simXp, simLevels };
+}
+
+/* ─── Main Optimizer ─── */
+
 export function optimize({
   currentLevels,
   goalLevels,
@@ -130,98 +533,31 @@ export function optimize({
     return { steps: [], error: 'No weapons selected. Please select at least one weapon.' };
   }
 
-  const simLevels = { ...currentLevels };
-  const simXp = {
-    attack: xpForLevel(simLevels.attack),
-    strength: xpForLevel(simLevels.strength),
-    defence: xpForLevel(simLevels.defence),
+  // Clamp: if any goal <= current, set goal = current (no training needed)
+  const effectiveGoals = {
+    attack: Math.max(goalLevels.attack, currentLevels.attack),
+    strength: Math.max(goalLevels.strength, currentLevels.strength),
+    defence: Math.max(goalLevels.defence, currentLevels.defence),
   };
 
-  const rawSteps = [];
-  const MAX_ITERATIONS = 300;
-  let iterations = 0;
-
-  while (iterations < MAX_ITERATIONS) {
-    iterations++;
-
-    const remainingSkills = SKILLS.filter(s => simLevels[s] < goalLevels[s]);
-    if (remainingSkills.length === 0) break;
-
-    // Offensive skills still needing training
-    const offensiveRemaining = remainingSkills.filter(s => s !== 'defence');
-    // Only consider defence once attack and strength goals are met
-    const candidates = offensiveRemaining.length > 0 ? offensiveRemaining : remainingSkills;
-
-    let bestSkill = null;
-    let bestSetup = null;
-
-    if (candidates.length === 1) {
-      // Only one skill left to train — no choice needed
-      bestSkill = candidates[0];
-      bestSetup = findBestSetup(bestSkill, simLevels, equipSet, availableWeapons);
-    } else {
-      // Lookahead: which level-up improves future DPS the most?
-      let bestFutureDps = -1;
-
-      for (const skill of candidates) {
-        const hypotheticalLevels = { ...simLevels, [skill]: simLevels[skill] + 1 };
-        const futureDps = bestDpsAtLevels(hypotheticalLevels, equipSet, availableWeapons);
-
-        // Tie-break: prefer Strength > Attack (str more directly affects max hit)
-        const tieBreaker = skill === 'strength' ? 0.0001 : 0;
-
-        if (futureDps + tieBreaker > bestFutureDps) {
-          bestFutureDps = futureDps + tieBreaker;
-          bestSkill = skill;
-        }
-      }
-
-      bestSetup = findBestSetup(bestSkill, simLevels, equipSet, availableWeapons);
-    }
-
-    if (!bestSkill || !bestSetup) {
-      return {
-        steps: [],
-        error: 'Cannot find any valid training setup. Make sure you have selected at least one weapon with a style that trains your remaining skills.',
-      };
-    }
-
-    // Train this skill by 1 level
-    const nextLevel = simLevels[bestSkill] + 1;
-    const xpNeeded = xpForLevel(nextLevel) - simXp[bestSkill];
-    const hours = xpNeeded / bestSetup.xpPerHour;
-
-    rawSteps.push({
-      skill: bestSkill,
-      fromLevel: simLevels[bestSkill],
-      toLevel: nextLevel,
-      xpNeeded,
-      xpPerHour: bestSetup.xpPerHour,
-      hours,
-      weapon: bestSetup.weapon.name,
-      style: bestSetup.style.name,
-      stance: bestSetup.style.stance,
-      gear: formatGear(bestSetup.gear),
-      maxHit: bestSetup.stats.maxHit,
-      accuracy: bestSetup.stats.accuracy,
-      dps: bestSetup.stats.dps,
-      _key: setupKey(bestSkill, bestSetup),
-    });
-
-    // Advance simulation
-    if (bestSetup.isShared) {
-      const xpEach = xpNeeded;
-      for (const s of SKILLS) {
-        simXp[s] += xpEach;
-        simLevels[s] = levelForXp(simXp[s]);
-      }
-    } else {
-      simXp[bestSkill] += xpNeeded;
-      simLevels[bestSkill] = nextLevel;
-    }
+  // Nothing to train
+  if (effectiveGoals.attack === currentLevels.attack &&
+      effectiveGoals.strength === currentLevels.strength &&
+      effectiveGoals.defence === currentLevels.defence) {
+    return { steps: [], totalHours: 0, totalXp: { attack: 0, strength: 0, defence: 0 }, finalLevels: { ...currentLevels }, error: null };
   }
 
-  // Merge consecutive steps with same skill + weapon + style + gear
+  const gearCache = buildGearCache(equipSet, availableWeapons);
+  const result = dijkstra(currentLevels, effectiveGoals, gearCache);
+
+  if (!result) {
+    return {
+      steps: [],
+      error: 'Cannot find any valid training setup. Make sure you have selected at least one weapon with a style that trains your remaining skills.',
+    };
+  }
+
+  const { rawSteps, simXp, simLevels } = pathToSteps(result.path, currentLevels, effectiveGoals, gearCache);
   const steps = mergeSteps(rawSteps);
 
   const totalHours = steps.reduce((sum, s) => sum + s.hours, 0);
@@ -240,12 +576,21 @@ export function optimize({
   };
 }
 
+/* ─── Utilities ─── */
+
 function formatGear(gear) {
   const result = {};
   for (const [slot, item] of Object.entries(gear)) {
     result[slot] = item ? item.name : null;
   }
   return result;
+}
+
+function setupKey(skill, setup) {
+  const gearNames = Object.values(setup.gear)
+    .map(item => item ? (item.name || item) : '')
+    .join(',');
+  return `${skill}|${setup.weapon.name || setup.weapon}|${setup.style.name || setup.style}|${gearNames}`;
 }
 
 function mergeSteps(steps) {
@@ -265,6 +610,9 @@ function mergeSteps(steps) {
       prev.accuracy = curr.accuracy;
       prev.dps = curr.dps;
       prev.xpPerHour = curr.xpPerHour;
+      if (curr.toLevels) {
+        prev.toLevels = { ...curr.toLevels };
+      }
     } else {
       merged.push({ ...curr });
     }

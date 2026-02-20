@@ -5,6 +5,7 @@ const SKILL_COLORS = {
   attack: 'var(--skill-attack)',
   strength: 'var(--skill-strength)',
   defence: 'var(--skill-defence)',
+  shared: 'var(--skill-shared)',
 };
 
 export default function StepCard({ step, index }) {
@@ -20,9 +21,17 @@ export default function StepCard({ step, index }) {
         <div className="step-info">
           <div className="step-row">
             <span className="detail-label">Training:</span>
-            <span className="step-skill" style={{ color: SKILL_COLORS[step.skill] }}>
-              {capitalize(step.skill)} {step.fromLevel} &rarr; {step.toLevel}
-            </span>
+            {step.skill === 'shared' && step.advancingSkills ? (
+              <span className="step-skill" style={{ color: SKILL_COLORS.shared }}>
+                Controlled: {step.advancingSkills.map(sk =>
+                  `${capitalize(sk)} ${step.fromLevels[sk]} → ${step.toLevels[sk]}`
+                ).join(' & ')}
+              </span>
+            ) : (
+              <span className="step-skill" style={{ color: SKILL_COLORS[step.skill] }}>
+                {capitalize(step.skill)} {step.fromLevel} &rarr; {step.toLevel}
+              </span>
+            )}
           </div>
           <div className="step-row">
             <span className="detail-label">XP/hr:</span>
