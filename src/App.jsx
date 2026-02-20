@@ -2,7 +2,6 @@ import { useState, useCallback, useMemo } from 'react';
 import Header from './components/Header/Header.jsx';
 import StatsInput from './components/StatsInput/StatsInput.jsx';
 import EquipmentSelect from './components/EquipmentSelect/EquipmentSelect.jsx';
-import CalculateButton from './components/CalculateButton/CalculateButton.jsx';
 import Results from './components/Results/Results.jsx';
 import { useUrlState, getInitialStateFromUrl } from './hooks/useUrlState.js';
 import { optimize } from './engine/optimizer.js';
@@ -100,24 +99,28 @@ function App() {
   return (
     <>
       <Header />
-      <div className="app-sections">
-        <StatsInput
-          currentLevels={currentLevels}
-          goalLevels={goalLevels}
-          onCurrentChange={handleCurrentChange}
-          onGoalChange={handleGoalChange}
-          onImportLevels={handleImportLevels}
-        />
-        <EquipmentSelect
-          selectedEquipment={selectedEquipment}
-          onToggle={handleToggleEquipment}
-        />
-        <CalculateButton
-          onClick={handleCalculate}
-          disabled={goalsAlreadyMet}
-          calculating={calculating}
-        />
-        <Results result={result} />
+      <div className="app-layout">
+        <div className="app-inputs">
+          <StatsInput
+            currentLevels={currentLevels}
+            goalLevels={goalLevels}
+            onCurrentChange={handleCurrentChange}
+            onGoalChange={handleGoalChange}
+            onImportLevels={handleImportLevels}
+          />
+          <EquipmentSelect
+            selectedEquipment={selectedEquipment}
+            onToggle={handleToggleEquipment}
+          />
+        </div>
+        <div className="app-results">
+          <Results
+            result={result}
+            onCalculate={handleCalculate}
+            calculating={calculating}
+            disabled={goalsAlreadyMet}
+          />
+        </div>
       </div>
     </>
   );
