@@ -1,0 +1,111 @@
+.skills-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.skill-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.skill-label {
+  font-weight: 700;
+  font-size: 14px;
+  width: 70px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.skill-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.skill-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.input-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.skill-arrow {
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+/* Username Lookup */
+.username-lookup {
+  margin-bottom: 4px;
+}
+
+.lookup-row {
+  display: flex;
+  gap: 8px;
+}
+
+.lookup-input {
+  flex: 1;
+  max-width: 200px;
+}
+
+.lookup-error {
+  color: var(--accent-red);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.lookup-confirm {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.lookup-result {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.lookup-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-confirm {
+  background: var(--accent-green);
+  color: #fff;
+  border-color: var(--accent-green);
+  font-size: 12px;
+  padding: 4px 14px;
+}
+
+.btn-confirm:hover {
+  background: #45a049;
+}
+
+.btn-cancel {
+  font-size: 12px;
+  padding: 4px 14px;
+}
+
+@media (max-width: 600px) {
+  .skill-row {
+    flex-wrap: wrap;
+  }
+
+  .skill-label {
+    width: 60px;
+  }
+}

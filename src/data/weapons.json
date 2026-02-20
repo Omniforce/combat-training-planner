@@ -1,0 +1,286 @@
+[
+  {
+    "name": "Bronze scimitar",
+    "attackSpeed": 4,
+    "requirements": { "attack": 1 },
+    "attackStab": 1,
+    "attackSlash": 7,
+    "attackCrush": -2,
+    "strengthBonus": 6,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Iron scimitar",
+    "attackSpeed": 4,
+    "requirements": { "attack": 1 },
+    "attackStab": 3,
+    "attackSlash": 10,
+    "attackCrush": -2,
+    "strengthBonus": 9,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Steel scimitar",
+    "attackSpeed": 4,
+    "requirements": { "attack": 5 },
+    "attackStab": 5,
+    "attackSlash": 14,
+    "attackCrush": -2,
+    "strengthBonus": 12,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Black scimitar",
+    "attackSpeed": 4,
+    "requirements": { "attack": 10 },
+    "attackStab": 7,
+    "attackSlash": 19,
+    "attackCrush": -2,
+    "strengthBonus": 14,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Mithril scimitar",
+    "attackSpeed": 4,
+    "requirements": { "attack": 20 },
+    "attackStab": 7,
+    "attackSlash": 21,
+    "attackCrush": -2,
+    "strengthBonus": 17,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Adamant scimitar",
+    "attackSpeed": 4,
+    "requirements": { "attack": 30 },
+    "attackStab": 10,
+    "attackSlash": 29,
+    "attackCrush": -2,
+    "strengthBonus": 24,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Rune scimitar",
+    "attackSpeed": 4,
+    "requirements": { "attack": 40 },
+    "attackStab": 14,
+    "attackSlash": 44,
+    "attackCrush": -2,
+    "strengthBonus": 38,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Dragon scimitar",
+    "attackSpeed": 4,
+    "requirements": { "attack": 60 },
+    "attackStab": 8,
+    "attackSlash": 67,
+    "attackCrush": -2,
+    "strengthBonus": 66,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Granite hammer",
+    "attackSpeed": 5,
+    "requirements": { "attack": 50, "strength": 50 },
+    "attackStab": -4,
+    "attackSlash": -4,
+    "attackCrush": 62,
+    "strengthBonus": 60,
+    "styles": [
+      { "name": "Pound", "type": "crush", "stance": "accurate", "skill": "attack" },
+      { "name": "Pummel", "type": "crush", "stance": "aggressive", "skill": "strength" },
+      { "name": "Block", "type": "crush", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Leaf-bladed battleaxe",
+    "attackSpeed": 5,
+    "requirements": { "attack": 65, "slayer": 55 },
+    "attackStab": -2,
+    "attackSlash": 72,
+    "attackCrush": 0,
+    "strengthBonus": 92,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Hack", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Smash", "type": "crush", "stance": "aggressive", "skill": "strength" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Toktz-xil-ak",
+    "attackSpeed": 4,
+    "requirements": { "attack": 60 },
+    "attackStab": 47,
+    "attackSlash": 45,
+    "attackCrush": -2,
+    "strengthBonus": 49,
+    "isObsidian": true,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Abyssal whip",
+    "attackSpeed": 4,
+    "requirements": { "attack": 70 },
+    "attackStab": 0,
+    "attackSlash": 82,
+    "attackCrush": 0,
+    "strengthBonus": 82,
+    "styles": [
+      { "name": "Flick", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Lash", "type": "slash", "stance": "controlled", "skill": "shared" },
+      { "name": "Deflect", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Bronze longsword",
+    "attackSpeed": 5,
+    "requirements": { "attack": 1 },
+    "attackStab": 4,
+    "attackSlash": 5,
+    "attackCrush": -2,
+    "strengthBonus": 6,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Iron longsword",
+    "attackSpeed": 5,
+    "requirements": { "attack": 1 },
+    "attackStab": 7,
+    "attackSlash": 9,
+    "attackCrush": -2,
+    "strengthBonus": 10,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Steel longsword",
+    "attackSpeed": 5,
+    "requirements": { "attack": 5 },
+    "attackStab": 11,
+    "attackSlash": 12,
+    "attackCrush": -2,
+    "strengthBonus": 14,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Mithril longsword",
+    "attackSpeed": 5,
+    "requirements": { "attack": 20 },
+    "attackStab": 15,
+    "attackSlash": 17,
+    "attackCrush": -2,
+    "strengthBonus": 19,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Adamant longsword",
+    "attackSpeed": 5,
+    "requirements": { "attack": 30 },
+    "attackStab": 22,
+    "attackSlash": 25,
+    "attackCrush": -2,
+    "strengthBonus": 27,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Rune longsword",
+    "attackSpeed": 5,
+    "requirements": { "attack": 40 },
+    "attackStab": 38,
+    "attackSlash": 40,
+    "attackCrush": -2,
+    "strengthBonus": 41,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  },
+  {
+    "name": "Dragon longsword",
+    "attackSpeed": 5,
+    "requirements": { "attack": 60 },
+    "attackStab": 58,
+    "attackSlash": 69,
+    "attackCrush": -2,
+    "strengthBonus": 71,
+    "styles": [
+      { "name": "Chop", "type": "slash", "stance": "accurate", "skill": "attack" },
+      { "name": "Slash", "type": "slash", "stance": "aggressive", "skill": "strength" },
+      { "name": "Lunge", "type": "stab", "stance": "controlled", "skill": "shared" },
+      { "name": "Block", "type": "slash", "stance": "defensive", "skill": "defence" }
+    ]
+  }
+]

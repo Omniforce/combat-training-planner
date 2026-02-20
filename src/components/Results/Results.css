@@ -1,0 +1,158 @@
+.results-error {
+  color: var(--accent-red);
+  font-size: 14px;
+}
+
+.results-done {
+  color: var(--accent-green);
+  font-size: 14px;
+}
+
+/* Summary */
+.summary {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding: 14px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.summary-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.summary-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.summary-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.summary-atk { color: var(--skill-attack); }
+.summary-str { color: var(--skill-strength); }
+.summary-def { color: var(--skill-defence); }
+
+/* Steps */
+.steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-input);
+  border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap;
+}
+
+.step-number {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.step-skill {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.step-levels {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.step-time {
+  margin-left: auto;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-gold);
+}
+
+.step-details {
+  padding: 12px 14px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.step-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.step-row {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.detail-label {
+  color: var(--text-muted);
+  min-width: 80px;
+}
+
+/* Gear Loadout */
+.gear-loadout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-content: flex-start;
+  max-width: 280px;
+}
+
+.gear-piece {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 600px) {
+  .summary {
+    gap: 10px;
+  }
+
+  .summary-stat {
+    min-width: 60px;
+  }
+
+  .summary-value {
+    font-size: 15px;
+  }
+
+  .step-details {
+    flex-direction: column;
+  }
+
+  .gear-loadout {
+    max-width: none;
+  }
+}

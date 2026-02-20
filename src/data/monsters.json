@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Gemstone Crab",
+    "hitpoints": null,
+    "defenceLevel": 1,
+    "defenceStab": 0,
+    "defenceSlash": 0,
+    "defenceCrush": 0,
+    "aggressive": false,
+    "notes": "Varlamore world boss, infinite HP, no overkill waste"
+  },
+  {
+    "name": "Sand Crabs",
+    "hitpoints": 60,
+    "defenceLevel": 1,
+    "defenceStab": -21,
+    "defenceSlash": -21,
+    "defenceCrush": -21,
+    "aggressive": true,
+    "notes": "Hosidius, easy to access"
+  },
+  {
+    "name": "Ammonite Crabs",
+    "hitpoints": 100,
+    "defenceLevel": 1,
+    "defenceStab": -21,
+    "defenceSlash": -21,
+    "defenceCrush": -21,
+    "aggressive": true,
+    "notes": "Fossil Island, best AFK crabs"
+  },
+  {
+    "name": "Rock Crabs",
+    "hitpoints": 50,
+    "defenceLevel": 1,
+    "defenceStab": -21,
+    "defenceSlash": -21,
+    "defenceCrush": -21,
+    "aggressive": true,
+    "notes": "Rellekka, easy access"
+  },
+  {
+    "name": "NMZ (Normal)",
+    "hitpoints": 80,
+    "defenceLevel": 50,
+    "defenceStab": 0,
+    "defenceSlash": 0,
+    "defenceCrush": 0,
+    "aggressive": true,
+    "notes": "Nightmare Zone normal mode, absorption potions"
+  },
+  {
+    "name": "NMZ (Hard)",
+    "hitpoints": 120,
+    "defenceLevel": 80,
+    "defenceStab": 10,
+    "defenceSlash": 10,
+    "defenceCrush": 10,
+    "aggressive": true,
+    "notes": "Nightmare Zone hard mode, better points and XP with high stats"
+  }
+]

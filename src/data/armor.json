@@ -1,0 +1,73 @@
+{
+  "head": [
+    { "name": "Iron full helm", "slot": "head", "requirements": { "defence": 1 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 7, "defenceSlash": 8, "defenceCrush": 6 },
+    { "name": "Steel full helm", "slot": "head", "requirements": { "defence": 5 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 10, "defenceSlash": 11, "defenceCrush": 9 },
+    { "name": "Mithril full helm", "slot": "head", "requirements": { "defence": 20 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 13, "defenceSlash": 14, "defenceCrush": 12 },
+    { "name": "Adamant full helm", "slot": "head", "requirements": { "defence": 30 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 19, "defenceSlash": 20, "defenceCrush": 17 },
+    { "name": "Rune full helm", "slot": "head", "requirements": { "defence": 40 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 30, "defenceSlash": 32, "defenceCrush": 27 },
+    { "name": "Berserker helm", "slot": "head", "requirements": { "defence": 45 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 3, "defenceStab": 31, "defenceSlash": 33, "defenceCrush": 28 },
+    { "name": "Helm of neitiznot", "slot": "head", "requirements": { "defence": 55 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 3, "defenceStab": 31, "defenceSlash": 33, "defenceCrush": 28 },
+    { "name": "Obsidian helm", "slot": "head", "requirements": { "defence": 60 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 3, "defenceStab": 33, "defenceSlash": 35, "defenceCrush": 32, "isObsidian": true }
+  ],
+  "body": [
+    { "name": "Iron platebody", "slot": "body", "requirements": { "defence": 1 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 22, "defenceSlash": 20, "defenceCrush": 12 },
+    { "name": "Steel platebody", "slot": "body", "requirements": { "defence": 5 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 32, "defenceSlash": 31, "defenceCrush": 24 },
+    { "name": "Mithril platebody", "slot": "body", "requirements": { "defence": 20 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 46, "defenceSlash": 44, "defenceCrush": 38 },
+    { "name": "Adamant platebody", "slot": "body", "requirements": { "defence": 30 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 63, "defenceSlash": 61, "defenceCrush": 55 },
+    { "name": "Rune platebody", "slot": "body", "requirements": { "defence": 40 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 82, "defenceSlash": 80, "defenceCrush": 72 },
+    { "name": "Fighter torso", "slot": "body", "requirements": { "defence": 40 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 4, "defenceStab": 51, "defenceSlash": 45, "defenceCrush": 42 },
+    { "name": "Obsidian platebody", "slot": "body", "requirements": { "defence": 60 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 3, "defenceStab": 58, "defenceSlash": 65, "defenceCrush": 52, "isObsidian": true }
+  ],
+  "legs": [
+    { "name": "Iron platelegs", "slot": "legs", "requirements": { "defence": 1 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 11, "defenceSlash": 10, "defenceCrush": 10 },
+    { "name": "Steel platelegs", "slot": "legs", "requirements": { "defence": 5 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 18, "defenceSlash": 16, "defenceCrush": 15 },
+    { "name": "Mithril platelegs", "slot": "legs", "requirements": { "defence": 20 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 24, "defenceSlash": 22, "defenceCrush": 21 },
+    { "name": "Adamant platelegs", "slot": "legs", "requirements": { "defence": 30 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 33, "defenceSlash": 31, "defenceCrush": 30 },
+    { "name": "Rune platelegs", "slot": "legs", "requirements": { "defence": 40 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 51, "defenceSlash": 49, "defenceCrush": 47 },
+    { "name": "Obsidian platelegs", "slot": "legs", "requirements": { "defence": 60 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 1, "defenceStab": 34, "defenceSlash": 38, "defenceCrush": 32, "isObsidian": true }
+  ],
+  "boots": [
+    { "name": "Climbing boots", "slot": "boots", "requirements": {}, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 2, "defenceStab": 1, "defenceSlash": 1, "defenceCrush": 2 },
+    { "name": "Rune boots", "slot": "boots", "requirements": { "defence": 40 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 2, "defenceStab": 6, "defenceSlash": 7, "defenceCrush": 8 },
+    { "name": "Dragon boots", "slot": "boots", "requirements": { "defence": 60 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 4, "defenceStab": 9, "defenceSlash": 10, "defenceCrush": 11 }
+  ],
+  "gloves": [
+    { "name": "Leather gloves", "slot": "gloves", "requirements": {}, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 1, "defenceSlash": 1, "defenceCrush": 2 },
+    { "name": "Mithril gloves", "slot": "gloves", "requirements": { "defence": 1 }, "attackStab": 3, "attackSlash": 3, "attackCrush": 3, "strengthBonus": 3, "defenceStab": 3, "defenceSlash": 3, "defenceCrush": 3 },
+    { "name": "Adamant gloves", "slot": "gloves", "requirements": { "defence": 1 }, "attackStab": 4, "attackSlash": 4, "attackCrush": 4, "strengthBonus": 4, "defenceStab": 4, "defenceSlash": 4, "defenceCrush": 4 },
+    { "name": "Rune gloves", "slot": "gloves", "requirements": { "defence": 1 }, "attackStab": 5, "attackSlash": 5, "attackCrush": 5, "strengthBonus": 5, "defenceStab": 5, "defenceSlash": 5, "defenceCrush": 5 },
+    { "name": "Dragon gloves", "slot": "gloves", "requirements": { "defence": 1 }, "attackStab": 6, "attackSlash": 6, "attackCrush": 6, "strengthBonus": 6, "defenceStab": 6, "defenceSlash": 6, "defenceCrush": 6 },
+    { "name": "Barrows gloves", "slot": "gloves", "requirements": { "defence": 1 }, "attackStab": 12, "attackSlash": 12, "attackCrush": 12, "strengthBonus": 12, "defenceStab": 12, "defenceSlash": 12, "defenceCrush": 12 }
+  ],
+  "cape": [
+    { "name": "Obsidian cape", "slot": "cape", "requirements": {}, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 9, "defenceSlash": 9, "defenceCrush": 9 },
+    { "name": "Fire cape", "slot": "cape", "requirements": {}, "attackStab": 1, "attackSlash": 1, "attackCrush": 1, "strengthBonus": 4, "defenceStab": 11, "defenceSlash": 11, "defenceCrush": 11 },
+    { "name": "Mythical cape", "slot": "cape", "requirements": {}, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 1, "defenceStab": 10, "defenceSlash": 10, "defenceCrush": 10 }
+  ],
+  "neck": [
+    { "name": "Amulet of power", "slot": "neck", "requirements": {}, "attackStab": 6, "attackSlash": 6, "attackCrush": 6, "strengthBonus": 6, "defenceStab": 6, "defenceSlash": 6, "defenceCrush": 6 },
+    { "name": "Amulet of glory", "slot": "neck", "requirements": {}, "attackStab": 10, "attackSlash": 10, "attackCrush": 10, "strengthBonus": 6, "defenceStab": 3, "defenceSlash": 3, "defenceCrush": 3 },
+    { "name": "Amulet of strength", "slot": "neck", "requirements": {}, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 10, "defenceStab": 0, "defenceSlash": 0, "defenceCrush": 0 },
+    { "name": "Amulet of fury", "slot": "neck", "requirements": {}, "attackStab": 10, "attackSlash": 10, "attackCrush": 10, "strengthBonus": 8, "defenceStab": 15, "defenceSlash": 15, "defenceCrush": 15 },
+    { "name": "Berserker necklace", "slot": "neck", "requirements": {}, "attackStab": -10, "attackSlash": -10, "attackCrush": -10, "strengthBonus": 7, "defenceStab": 0, "defenceSlash": 0, "defenceCrush": 0, "isObsidian": true }
+  ],
+  "ring": [
+    { "name": "Warrior ring", "slot": "ring", "requirements": {}, "attackStab": 0, "attackSlash": 4, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 0, "defenceSlash": 0, "defenceCrush": 0 },
+    { "name": "Warrior ring (i)", "slot": "ring", "requirements": {}, "attackStab": 0, "attackSlash": 8, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 0, "defenceSlash": 0, "defenceCrush": 0 },
+    { "name": "Berserker ring", "slot": "ring", "requirements": {}, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 4, "defenceStab": 0, "defenceSlash": 0, "defenceCrush": 0 },
+    { "name": "Berserker ring (i)", "slot": "ring", "requirements": {}, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 8, "defenceStab": 0, "defenceSlash": 0, "defenceCrush": 0 },
+    { "name": "Brimstone ring", "slot": "ring", "requirements": {}, "attackStab": 4, "attackSlash": 4, "attackCrush": 4, "strengthBonus": 4, "defenceStab": 4, "defenceSlash": 4, "defenceCrush": 4 }
+  ],
+  "shield": [
+    { "name": "Iron defender", "slot": "shield", "requirements": { "attack": 1, "defence": 1 }, "attackStab": 3, "attackSlash": 2, "attackCrush": 1, "strengthBonus": 2, "defenceStab": 3, "defenceSlash": 2, "defenceCrush": 1 },
+    { "name": "Steel defender", "slot": "shield", "requirements": { "attack": 5, "defence": 5 }, "attackStab": 4, "attackSlash": 3, "attackCrush": 2, "strengthBonus": 3, "defenceStab": 4, "defenceSlash": 3, "defenceCrush": 2 },
+    { "name": "Mithril defender", "slot": "shield", "requirements": { "attack": 20, "defence": 20 }, "attackStab": 5, "attackSlash": 4, "attackCrush": 3, "strengthBonus": 4, "defenceStab": 5, "defenceSlash": 4, "defenceCrush": 3 },
+    { "name": "Adamant defender", "slot": "shield", "requirements": { "attack": 30, "defence": 30 }, "attackStab": 6, "attackSlash": 5, "attackCrush": 4, "strengthBonus": 5, "defenceStab": 6, "defenceSlash": 5, "defenceCrush": 4 },
+    { "name": "Rune defender", "slot": "shield", "requirements": { "attack": 40, "defence": 40 }, "attackStab": 10, "attackSlash": 9, "attackCrush": 8, "strengthBonus": 8, "defenceStab": 10, "defenceSlash": 9, "defenceCrush": 8 },
+    { "name": "Dragon defender", "slot": "shield", "requirements": { "attack": 60, "defence": 60 }, "attackStab": 13, "attackSlash": 12, "attackCrush": 11, "strengthBonus": 11, "defenceStab": 13, "defenceSlash": 12, "defenceCrush": 11 },
+    { "name": "Rune kiteshield", "slot": "shield", "requirements": { "defence": 40 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 44, "defenceSlash": 48, "defenceCrush": 46 },
+    { "name": "Dragon kiteshield", "slot": "shield", "requirements": { "defence": 60 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 0, "defenceStab": 58, "defenceSlash": 62, "defenceCrush": 60 },
+    { "name": "Toktz-ket-xil", "slot": "shield", "requirements": { "defence": 60 }, "attackStab": 0, "attackSlash": 0, "attackCrush": 0, "strengthBonus": 5, "defenceStab": 20, "defenceSlash": 25, "defenceCrush": 23, "isObsidian": true },
+    { "name": "Avernic defender", "slot": "shield", "requirements": { "attack": 70, "defence": 70 }, "attackStab": 18, "attackSlash": 17, "attackCrush": 16, "strengthBonus": 13, "defenceStab": 18, "defenceSlash": 17, "defenceCrush": 16 }
+  ]
+}
