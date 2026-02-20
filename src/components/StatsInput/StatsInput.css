@@ -8,7 +8,7 @@
 .skill-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 18px;
 }
 
 .skill-label {
@@ -17,6 +17,7 @@
   width: 70px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
+  margin-top: 15px;
 }
 
 .skill-inputs {
@@ -92,7 +93,7 @@
 }
 
 .btn-confirm:hover {
-  background: #45a049;
+  background: #5ab318;
 }
 
 .btn-cancel {

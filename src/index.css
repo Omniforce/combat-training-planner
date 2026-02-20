@@ -7,24 +7,24 @@
 }
 
 :root {
-  --bg-primary: #1a1a2e;
-  --bg-secondary: #16213e;
-  --bg-card: #1e2a47;
-  --bg-input: #0f1629;
-  --border-color: #2a3a5c;
+  --bg-primary: #1b150d;
+  --bg-secondary: #2a2115;
+  --bg-card: #332a1c;
+  --bg-input: #18140c;
+  --border-color: #4a3d2b;
   --border-focus: #d4a946;
-  --text-primary: #e0e0e0;
-  --text-secondary: #a0a8c0;
-  --text-muted: #6b7394;
+  --text-primary: #e2dbc8;
+  --text-secondary: #b8a282;
+  --text-muted: #94866d;
   --accent-gold: #d4a946;
-  --accent-green: #4caf50;
-  --accent-blue: #5b8def;
-  --accent-red: #e74c3c;
-  --accent-orange: #e67e22;
-  --skill-attack: #c0392b;
-  --skill-strength: #27ae60;
-  --skill-defence: #2980b9;
-  --skill-shared: #8e44ad;
+  --accent-green: #6bc71f;
+  --accent-blue: #3ea6e6;
+  --accent-red: #ee4231;
+  --accent-orange: #f7861b;
+  --skill-attack: #ee4231;
+  --skill-strength: #6bc71f;
+  --skill-defence: #3ea6e6;
+  --skill-shared: #855cd8;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   --radius: 8px;
   --radius-sm: 4px;
@@ -104,7 +104,7 @@ h1, h2, h3, h4 {
 }
 
 a {
-  color: var(--accent-blue);
+  color: #936039;
   text-decoration: none;
 }
 
