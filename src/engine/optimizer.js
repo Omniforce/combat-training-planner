@@ -261,6 +261,31 @@ function simulateControlledBlock(startA, startS, startD, goalA, goalS, goalD, ge
     }
   }
 
+  // Finish the remaining skill with single-skill training (carry-over aware)
+  const remaining = SKILLS.filter(sk =>
+    levelForXp(simXp[sk]) < goals[sk]
+  );
+
+  if (remaining.length === 1) {
+    const sk = remaining[0];
+    let level = levelForXp(simXp[sk]);
+
+    while (level < goals[sk]) {
+      const levels = {
+        attack: levelForXp(simXp.attack),
+        strength: levelForXp(simXp.strength),
+        defence: levelForXp(simXp.defence),
+      };
+      const setup = findBestSetupCached(sk, levels, gearCache);
+      if (!setup || setup.xpPerHour <= 0) break;
+
+      const xpNeeded = xpForLevel(level + 1) - simXp[sk];
+      totalHours += xpNeeded / setup.xpPerHour;
+      simXp[sk] = xpForLevel(level + 1);
+      level += 1;
+    }
+  }
+
   const finalLevels = {
     attack: Math.min(levelForXp(simXp.attack), goalA),
     strength: Math.min(levelForXp(simXp.strength), goalS),
@@ -473,6 +498,43 @@ function pathToSteps(path, startLevels, goalLevels, gearCache) {
           dps: controlled.stats.dps,
           _key: setupKey('shared', controlled),
         });
+      }
+
+      // Generate steps for the remaining single skill (matching the extended block)
+      const postRemaining = SKILLS.filter(sk => simLevels[sk] < goals[sk]);
+      if (postRemaining.length === 1) {
+        const sk = postRemaining[0];
+
+        while (simLevels[sk] < goals[sk]) {
+          const levels = { ...simLevels };
+          const setup = findBestSetupCached(sk, levels, gearCache);
+          if (!setup) break;
+
+          const fromLevel = simLevels[sk];
+          const toLevel = fromLevel + 1;
+          const xpNeeded = xpForLevel(toLevel) - simXp[sk];
+          const hours = xpNeeded / setup.xpPerHour;
+
+          rawSteps.push({
+            skill: sk,
+            fromLevel,
+            toLevel,
+            xpNeeded,
+            xpPerHour: setup.xpPerHour,
+            hours,
+            weapon: setup.weapon.name,
+            style: setup.style.name,
+            stance: setup.style.stance,
+            gear: formatGear(setup.gear),
+            maxHit: setup.stats.maxHit,
+            accuracy: setup.stats.accuracy,
+            dps: setup.stats.dps,
+            _key: setupKey(sk, setup),
+          });
+
+          simXp[sk] = xpForLevel(toLevel);
+          simLevels[sk] = toLevel;
+        }
       }
     } else {
       // Single-skill transition
