@@ -1,7 +1,6 @@
 import {
   formatTime,
   formatNumber,
-  formatPercent,
   capitalize,
 } from "../../utils/format.js";
 import GearLoadout from "./GearLoadout.jsx";
@@ -67,14 +66,6 @@ export default function StepCard({ step, index, prevStep }) {
           <div className="step-row">
             <span className="detail-label">XP needed:</span>
             <span>{formatNumber(step.xpNeeded)}</span>
-          </div>
-          <div className="step-row">
-            <span className="detail-label">Max Hit:</span>
-            <span>{step.maxHit}</span>
-          </div>
-          <div className="step-row">
-            <span className="detail-label">Accuracy:</span>
-            <span>{formatPercent(step.accuracy)}</span>
           </div>
         </div>
         <GearLoadout
