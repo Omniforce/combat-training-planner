@@ -1,3 +1,27 @@
+import {
+  compressToEncodedURIComponent,
+  decompressFromEncodedURIComponent,
+} from 'lz-string';
+
+function parseParams(params) {
+  const currentLevels = {
+    attack: parseInt(params.get('ca')) || 1,
+    strength: parseInt(params.get('cs')) || 1,
+    defence: parseInt(params.get('cd')) || 1,
+  };
+
+  const goalLevels = {
+    attack: parseInt(params.get('ga')) || 99,
+    strength: parseInt(params.get('gs')) || 99,
+    defence: parseInt(params.get('gd')) || 99,
+  };
+
+  const eqStr = params.get('eq');
+  const equipment = eqStr ? eqStr.split('|') : [];
+
+  return { currentLevels, goalLevels, equipment };
+}
+
 export function encodeState({ currentLevels, goalLevels, equipment }) {
   const params = new URLSearchParams();
 
@@ -17,26 +41,26 @@ export function encodeState({ currentLevels, goalLevels, equipment }) {
     params.set('eq', equipment.join('|'));
   }
 
-  return params.toString();
+  const raw = params.toString();
+  const compressed = 'z=' + compressToEncodedURIComponent(raw);
+
+  return compressed.length < raw.length ? compressed : raw;
 }
 
 export function decodeState(search) {
   const params = new URLSearchParams(search);
+  const compressed = params.get('z');
 
-  const currentLevels = {
-    attack: parseInt(params.get('ca')) || 1,
-    strength: parseInt(params.get('cs')) || 1,
-    defence: parseInt(params.get('cd')) || 1,
-  };
+  if (compressed) {
+    try {
+      const inner = decompressFromEncodedURIComponent(compressed);
+      if (inner) {
+        return parseParams(new URLSearchParams(inner));
+      }
+    } catch {
+      // fall through to legacy parsing
+    }
+  }
 
-  const goalLevels = {
-    attack: parseInt(params.get('ga')) || 99,
-    strength: parseInt(params.get('gs')) || 99,
-    defence: parseInt(params.get('gd')) || 99,
-  };
-
-  const eqStr = params.get('eq');
-  const equipment = eqStr ? eqStr.split('|') : [];
-
-  return { currentLevels, goalLevels, equipment };
+  return parseParams(params);
 }
