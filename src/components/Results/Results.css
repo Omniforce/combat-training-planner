@@ -113,9 +113,15 @@
   text-transform: uppercase;
 }
 
-.summary-atk { color: var(--skill-attack); }
-.summary-str { color: var(--skill-strength); }
-.summary-def { color: var(--skill-defence); }
+.summary-atk {
+  color: var(--skill-attack);
+}
+.summary-str {
+  color: var(--skill-strength);
+}
+.summary-def {
+  color: var(--skill-defence);
+}
 
 /* Steps */
 .steps-list {
@@ -128,7 +134,6 @@
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  overflow: hidden;
 }
 
 .step-header {
@@ -219,6 +224,40 @@
   color: var(--accent-gold);
   border-color: var(--accent-gold);
   background: rgba(212, 169, 70, 0.1);
+}
+
+.style-changed {
+  color: var(--accent-gold);
+}
+
+/* CSS tooltips */
+.has-tooltip {
+  position: relative;
+  cursor: default;
+}
+
+.has-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 400;
+  white-space: nowrap;
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+}
+
+.has-tooltip:hover::after {
+  opacity: 1;
 }
 
 @media (max-width: 600px) {

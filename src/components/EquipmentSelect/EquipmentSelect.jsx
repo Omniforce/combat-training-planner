@@ -73,6 +73,7 @@ export default function EquipmentSelect({ selectedEquipment, onToggle }) {
   return (
     <div className="section-card">
       <h2>Available Equipment</h2>
+      <p className="equip-description">Add the gear you own or plan to use. You can add multiple items for the same slot — the optimizer will figure out the best piece to equip at each stage of training.</p>
 
       <div className="equip-toolbar">
         <div className="equip-search-wrap" ref={wrapperRef}>

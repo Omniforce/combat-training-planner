@@ -18,7 +18,7 @@ export default function GearLoadout({ gear, weapon, prevGear, prevWeapon }) {
   return (
     <div className="gear-loadout">
       {items.map(({ slot, name, changed }) => (
-        <span key={slot} className={`gear-piece${changed ? ' gear-changed' : ''}`} title={slot}>
+        <span key={slot} className={`gear-piece${changed ? ' gear-changed has-tooltip' : ''}`} data-tooltip={changed ? 'Changed since previous step' : undefined}>
           {name}
         </span>
       ))}

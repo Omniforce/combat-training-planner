@@ -117,3 +117,10 @@
 .equip-tag-remove:hover {
   color: var(--accent-red);
 }
+
+.equip-description {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: -4px 0 12px;
+  line-height: 1.4;
+}

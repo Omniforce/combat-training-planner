@@ -9,12 +9,14 @@ const SKILL_COLORS = {
 };
 
 export default function StepCard({ step, index, prevStep }) {
+  const styleChanged = prevStep && step.weapon === prevStep.weapon && (step.style !== prevStep.style || step.stance !== prevStep.stance);
+
   return (
     <div className="step-card">
       <div className="step-header">
         <span className="step-number">Step {index + 1}</span>
         <span className="step-weapon">{step.weapon}</span>
-        <span className="step-stance">{step.style} ({capitalize(step.stance)})</span>
+        <span className={`step-stance${styleChanged ? ' style-changed has-tooltip' : ''}`} data-tooltip={styleChanged ? 'Changed since previous step' : undefined}>{step.style} ({capitalize(step.stance)})</span>
         <span className="step-time">{formatTime(step.hours)}</span>
       </div>
       <div className="step-details">
