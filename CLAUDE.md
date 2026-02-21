@@ -23,3 +23,7 @@ OSRS Optimal Training — a React web application built with Vite. Currently in 
 ## Architecture
 
 Single-page React app. Entry point is `src/main.jsx` which renders `<App />` into `index.html`. Styles use plain CSS files (no CSS-in-JS or preprocessor) with CSS custom properties for theming.
+
+# Additional Instructions
+
+- ~/.claude/CLAUDE.md
