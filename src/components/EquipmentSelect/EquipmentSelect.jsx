@@ -6,7 +6,7 @@ import './EquipmentSelect.css';
 const ALL_ITEMS = (() => {
   const items = [];
   for (const w of weapons) {
-    items.push({ name: w.name, slot: 'Weapon' });
+    items.push({ name: w.name, slot: w.twoHanded ? '2H Weapon' : 'Weapon' });
   }
   const slotLabels = {
     head: 'Head', body: 'Body', legs: 'Legs', boots: 'Boots',
@@ -45,8 +45,6 @@ export default function EquipmentSelect({ selectedEquipment, onToggle }) {
 
   const handleAdd = (name) => {
     onToggle(name);
-    setSearch('');
-    setOpen(false);
   };
 
   const handleAddAll = () => {
@@ -69,7 +67,7 @@ export default function EquipmentSelect({ selectedEquipment, onToggle }) {
     return groups;
   }, [selectedEquipment]);
 
-  const slotOrder = ['Weapon', 'Head', 'Neck', 'Cape', 'Body', 'Legs', 'Shield', 'Gloves', 'Boots', 'Ring'];
+  const slotOrder = ['Weapon', '2H Weapon', 'Head', 'Neck', 'Cape', 'Body', 'Legs', 'Shield', 'Gloves', 'Boots', 'Ring'];
   const hasSelected = selectedEquipment.size > 0;
 
   return (
@@ -89,7 +87,7 @@ export default function EquipmentSelect({ selectedEquipment, onToggle }) {
           {open && results.length > 0 && (
             <ul className="equip-dropdown">
               {results.map(item => (
-                <li key={item.name} className="equip-dropdown-item" onMouseDown={() => handleAdd(item.name)}>
+                <li key={item.name} className="equip-dropdown-item" onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); handleAdd(item.name); }}>
                   <span className="equip-dropdown-name">{item.name}</span>
                   <span className="equip-dropdown-slot">{item.slot}</span>
                 </li>

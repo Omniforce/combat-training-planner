@@ -1,0 +1,41 @@
+{
+  "armor": [
+    {
+      "name": "Oathplate helm",
+      "slot": "head",
+      "requirements": { "defence": 78 },
+      "attackStab": 0,
+      "attackSlash": 10,
+      "attackCrush": 0,
+      "strengthBonus": 6,
+      "defenceStab": 50,
+      "defenceSlash": 72,
+      "defenceCrush": 45
+    },
+    {
+      "name": "Oathplate chest",
+      "slot": "body",
+      "requirements": { "defence": 78 },
+      "attackStab": 0,
+      "attackSlash": 16,
+      "attackCrush": 0,
+      "strengthBonus": 4,
+      "defenceStab": 105,
+      "defenceSlash": 128,
+      "defenceCrush": 100
+    },
+    {
+      "name": "Oathplate legs",
+      "slot": "legs",
+      "requirements": { "defence": 78 },
+      "attackStab": 0,
+      "attackSlash": 12,
+      "attackCrush": 0,
+      "strengthBonus": 2,
+      "defenceStab": 75,
+      "defenceSlash": 100,
+      "defenceCrush": 73
+    }
+  ],
+  "weapons": []
+}

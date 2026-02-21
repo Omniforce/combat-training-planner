@@ -83,7 +83,7 @@
   text-transform: uppercase;
   color: var(--accent-gold);
   letter-spacing: 0.3px;
-  min-width: 56px;
+  min-width: 72px;
   flex-shrink: 0;
 }
 

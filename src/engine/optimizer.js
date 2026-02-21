@@ -57,25 +57,30 @@ class MinHeap {
 
 function collectThresholds(equipSet) {
   const atkSet = new Set();
+  const strSet = new Set();
   const defSet = new Set();
 
   for (const w of weapons) {
     if (!equipSet.has(w.name)) continue;
     atkSet.add(w.requirements?.attack || 1);
+    strSet.add(w.requirements?.strength || 1);
   }
 
   for (const slot of Object.values(armorData)) {
     for (const item of slot) {
       if (!equipSet.has(item.name)) continue;
       defSet.add(item.requirements?.defence || 1);
+      strSet.add(item.requirements?.strength || 1);
     }
   }
 
   atkSet.add(1);
+  strSet.add(1);
   defSet.add(1);
 
   return {
     atkThresholds: [...atkSet].sort((a, b) => a - b),
+    strThresholds: [...strSet].sort((a, b) => a - b),
     defThresholds: [...defSet].sort((a, b) => a - b),
   };
 }
@@ -90,63 +95,66 @@ function getThresholdLevel(level, thresholds) {
 }
 
 function buildGearCache(equipSet, availableWeapons) {
-  const { atkThresholds, defThresholds } = collectThresholds(equipSet);
+  const { atkThresholds, strThresholds, defThresholds } = collectThresholds(equipSet);
   const cache = new Map();
 
   for (const atkT of atkThresholds) {
-    for (const defT of defThresholds) {
-      const key = `${atkT},${defT}`;
-      const entries = [];
-      const levels = { attack: atkT, strength: 1, defence: defT };
+    for (const strT of strThresholds) {
+      for (const defT of defThresholds) {
+        const key = `${atkT},${strT},${defT}`;
+        const entries = [];
+        const levels = { attack: atkT, strength: strT, defence: defT };
 
-      for (const weapon of availableWeapons) {
-        if (!canEquipWeapon(weapon, levels)) continue;
+        for (const weapon of availableWeapons) {
+          if (!canEquipWeapon(weapon, levels)) continue;
 
-        for (const style of weapon.styles) {
-          const gear = solveBestGear({
-            weapon, style, levels,
-            monster: DEFAULT_MONSTER,
-            availableEquipment: equipSet,
-          });
+          for (const style of weapon.styles) {
+            const gear = solveBestGear({
+              weapon, style, levels,
+              monster: DEFAULT_MONSTER,
+              availableEquipment: equipSet,
+            });
 
-          const attackType = style.type;
-          const bonuses = sumGearBonuses(gear, attackType);
+            const attackType = style.type;
+            const bonuses = sumGearBonuses(gear, attackType);
 
-          let weaponAttackBonus = 0;
-          if (attackType === 'stab') weaponAttackBonus = weapon.attackStab || 0;
-          else if (attackType === 'slash') weaponAttackBonus = weapon.attackSlash || 0;
-          else if (attackType === 'crush') weaponAttackBonus = weapon.attackCrush || 0;
+            let weaponAttackBonus = 0;
+            if (attackType === 'stab') weaponAttackBonus = weapon.attackStab || 0;
+            else if (attackType === 'slash') weaponAttackBonus = weapon.attackSlash || 0;
+            else if (attackType === 'crush') weaponAttackBonus = weapon.attackCrush || 0;
 
-          const countObs = Object.values(gear).filter(g => g && g.isObsidian).length;
+            const countObs = Object.values(gear).filter(g => g && g.isObsidian).length;
 
-          entries.push({
-            weapon,
-            style,
-            gear,
-            equipAttackBonus: bonuses.attackBonus + weaponAttackBonus,
-            equipStrengthBonus: bonuses.strengthBonus + (weapon.strengthBonus || 0),
-            attackSpeed: weapon.attackSpeed,
-            attackType,
-            isObsidianSet: countObs >= 3,
-            hasBerserkerNecklace: !!(gear.neck && gear.neck.isObsidian),
-            isObsidianWeapon: weapon.isObsidian || false,
-          });
+            entries.push({
+              weapon,
+              style,
+              gear,
+              equipAttackBonus: bonuses.attackBonus + weaponAttackBonus,
+              equipStrengthBonus: bonuses.strengthBonus + (weapon.strengthBonus || 0),
+              attackSpeed: weapon.attackSpeed,
+              attackType,
+              isObsidianSet: countObs >= 3,
+              hasBerserkerNecklace: !!(gear.neck && gear.neck.isObsidian),
+              isObsidianWeapon: weapon.isObsidian || false,
+            });
+          }
         }
-      }
 
-      cache.set(key, entries);
+        cache.set(key, entries);
+      }
     }
   }
 
-  return { cache, atkThresholds, defThresholds };
+  return { cache, atkThresholds, strThresholds, defThresholds };
 }
 
 /* ─── Fast Cached DPS Evaluation ─── */
 
 function findBestSetupCached(skill, levels, gearCache) {
   const atkT = getThresholdLevel(levels.attack, gearCache.atkThresholds);
+  const strT = getThresholdLevel(levels.strength, gearCache.strThresholds);
   const defT = getThresholdLevel(levels.defence, gearCache.defThresholds);
-  const entries = gearCache.cache.get(`${atkT},${defT}`) || [];
+  const entries = gearCache.cache.get(`${atkT},${strT},${defT}`) || [];
 
   let bestXphr = 0;
   let bestEntry = null;
@@ -184,8 +192,9 @@ function findBestSetupCached(skill, levels, gearCache) {
 
 function findBestControlledCached(levels, gearCache) {
   const atkT = getThresholdLevel(levels.attack, gearCache.atkThresholds);
+  const strT = getThresholdLevel(levels.strength, gearCache.strThresholds);
   const defT = getThresholdLevel(levels.defence, gearCache.defThresholds);
-  const entries = gearCache.cache.get(`${atkT},${defT}`) || [];
+  const entries = gearCache.cache.get(`${atkT},${strT},${defT}`) || [];
 
   let bestXphr = 0;
   let bestEntry = null;

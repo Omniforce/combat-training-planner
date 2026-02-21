@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "prebuild": "node scripts/generate-item-data.js",
+    "generate-data": "node scripts/generate-item-data.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },

@@ -74,6 +74,11 @@ export function solveBestGear({
 
   // First pass: pick best item per slot independently based on offensive contribution
   for (const slot of SLOTS) {
+    if (slot === 'shield' && weapon.twoHanded) {
+      gear[slot] = null;
+      continue;
+    }
+
     const candidates = getAvailableItems(slot, levels, availableEquipment);
     if (candidates.length === 0) {
       gear[slot] = null;
