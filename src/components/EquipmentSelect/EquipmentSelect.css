@@ -42,7 +42,8 @@
   transition: background 0.1s;
 }
 
-.equip-dropdown-item:hover {
+.equip-dropdown-item:hover,
+.equip-dropdown-active {
   background: var(--bg-card);
 }
 
