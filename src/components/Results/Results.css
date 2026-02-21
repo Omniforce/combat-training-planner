@@ -215,6 +215,12 @@
   color: var(--text-secondary);
 }
 
+.gear-changed {
+  color: var(--accent-gold);
+  border-color: var(--accent-gold);
+  background: rgba(212, 169, 70, 0.1);
+}
+
 @media (max-width: 600px) {
   .summary {
     gap: 10px;

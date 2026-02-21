@@ -59,7 +59,7 @@ export default function Results({ result, onCalculate, calculating, disabled }) 
       <Summary result={result} />
       <div className="steps-list">
         {result.steps.map((step, i) => (
-          <StepCard key={i} step={step} index={i} />
+          <StepCard key={i} step={step} index={i} prevStep={i > 0 ? result.steps[i - 1] : null} />
         ))}
       </div>
     </div>

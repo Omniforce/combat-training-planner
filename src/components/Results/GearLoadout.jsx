@@ -1,16 +1,24 @@
 const SLOT_ORDER = ['head', 'neck', 'cape', 'body', 'legs', 'shield', 'gloves', 'boots', 'ring'];
 
-export default function GearLoadout({ gear }) {
-  const equipped = SLOT_ORDER
-    .filter(slot => gear[slot])
-    .map(slot => ({ slot, name: gear[slot] }));
+export default function GearLoadout({ gear, weapon, prevGear, prevWeapon }) {
+  const items = [];
 
-  if (equipped.length === 0) return null;
+  if (weapon) {
+    items.push({ slot: 'weapon', name: weapon, changed: prevWeapon != null && weapon !== prevWeapon });
+  }
+
+  for (const slot of SLOT_ORDER) {
+    if (gear[slot]) {
+      items.push({ slot, name: gear[slot], changed: prevGear ? gear[slot] !== prevGear[slot] : false });
+    }
+  }
+
+  if (items.length === 0) return null;
 
   return (
     <div className="gear-loadout">
-      {equipped.map(({ slot, name }) => (
-        <span key={slot} className="gear-piece" title={slot}>
+      {items.map(({ slot, name, changed }) => (
+        <span key={slot} className={`gear-piece${changed ? ' gear-changed' : ''}`} title={slot}>
           {name}
         </span>
       ))}

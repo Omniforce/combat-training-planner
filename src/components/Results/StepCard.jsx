@@ -8,7 +8,7 @@ const SKILL_COLORS = {
   shared: 'var(--skill-shared)',
 };
 
-export default function StepCard({ step, index }) {
+export default function StepCard({ step, index, prevStep }) {
   return (
     <div className="step-card">
       <div className="step-header">
@@ -50,7 +50,7 @@ export default function StepCard({ step, index }) {
             <span>{formatPercent(step.accuracy)}</span>
           </div>
         </div>
-        <GearLoadout gear={step.gear} />
+        <GearLoadout gear={step.gear} weapon={step.weapon} prevGear={prevStep?.gear} prevWeapon={prevStep?.weapon} />
       </div>
     </div>
   );
