@@ -1,24 +1,29 @@
-import { useState, useCallback, useMemo } from 'react';
-import Header from './components/Header/Header.jsx';
-import StatsInput from './components/StatsInput/StatsInput.jsx';
-import EquipmentSelect from './components/EquipmentSelect/EquipmentSelect.jsx';
-import Results from './components/Results/Results.jsx';
-import { useUrlState, getInitialStateFromUrl } from './hooks/useUrlState.js';
-import { optimize } from './engine/optimizer.js';
-import './App.css';
+import { useState, useCallback, useMemo } from "react";
+import Header from "./components/Header/Header.jsx";
+import StatsInput from "./components/StatsInput/StatsInput.jsx";
+import EquipmentSelect from "./components/EquipmentSelect/EquipmentSelect.jsx";
+import Results from "./components/Results/Results.jsx";
+import { useUrlState, getInitialStateFromUrl } from "./hooks/useUrlState.js";
+import { optimize } from "./engine/optimizer.js";
+import "./App.css";
 
 const initialState = getInitialStateFromUrl();
 
 function App() {
-  const [currentLevels, setCurrentLevels] = useState(initialState.currentLevels);
+  const [currentLevels, setCurrentLevels] = useState(
+    initialState.currentLevels,
+  );
   const [goalLevels, setGoalLevels] = useState(initialState.goalLevels);
   const [selectedEquipment, setSelectedEquipment] = useState(
-    () => new Set(initialState.equipment)
+    () => new Set(initialState.equipment),
   );
   const [result, setResult] = useState(null);
   const [calculating, setCalculating] = useState(false);
 
-  const equipmentArray = useMemo(() => [...selectedEquipment], [selectedEquipment]);
+  const equipmentArray = useMemo(
+    () => [...selectedEquipment],
+    [selectedEquipment],
+  );
 
   useUrlState({
     currentLevels,
@@ -27,15 +32,15 @@ function App() {
   });
 
   const handleCurrentChange = useCallback((skill, value) => {
-    setCurrentLevels(prev => ({ ...prev, [skill]: value }));
+    setCurrentLevels((prev) => ({ ...prev, [skill]: value }));
   }, []);
 
   const handleGoalChange = useCallback((skill, value) => {
-    setGoalLevels(prev => ({ ...prev, [skill]: value }));
+    setGoalLevels((prev) => ({ ...prev, [skill]: value }));
   }, []);
 
   const handleToggleEquipment = useCallback((name) => {
-    setSelectedEquipment(prev => {
+    setSelectedEquipment((prev) => {
       const next = new Set(prev);
       if (next.has(name)) {
         next.delete(name);
@@ -58,7 +63,10 @@ function App() {
     // Validate inputs
     const cLevels = {
       attack: Math.max(1, Math.min(99, parseInt(currentLevels.attack) || 1)),
-      strength: Math.max(1, Math.min(99, parseInt(currentLevels.strength) || 1)),
+      strength: Math.max(
+        1,
+        Math.min(99, parseInt(currentLevels.strength) || 1),
+      ),
       defence: Math.max(1, Math.min(99, parseInt(currentLevels.defence) || 1)),
     };
     const gLevels = {
@@ -73,7 +81,11 @@ function App() {
     gLevels.defence = Math.max(gLevels.defence, cLevels.defence);
 
     if (selectedEquipment.size === 0) {
-      setResult({ error: 'Please select at least one piece of equipment (including a weapon).', steps: [] });
+      setResult({
+        error:
+          "Please select at least one piece of equipment (including a weapon).",
+        steps: [],
+      });
       return;
     }
 

@@ -1,17 +1,24 @@
-import weapons from '../data/weapons.json';
-import armorData from '../data/armor.json';
-import monsters from '../data/monsters.json';
-import { xpForLevel, levelForXp } from './xp.js';
-import { canEquipWeapon, solveBestGear, sumGearBonuses } from './gear-solver.js';
-import { calculateCombatStats } from './combat.js';
+import weapons from "../data/weapons.json";
+import armorData from "../data/armor.json";
+import monsters from "../data/monsters.json";
+import { xpForLevel, levelForXp } from "./xp.js";
+import {
+  canEquipWeapon,
+  solveBestGear,
+  sumGearBonuses,
+} from "./gear-solver.js";
+import { calculateCombatStats } from "./combat.js";
 
-const SKILLS = ['attack', 'strength', 'defence'];
-const DEFAULT_MONSTER = monsters.find(m => m.name === 'Gemstone Crab') || monsters[0];
+const SKILLS = ["attack", "strength", "defence"];
+const DEFAULT_MONSTER =
+  monsters.find((m) => m.name === "Gemstone Crab") || monsters[0];
 
 /* ─── MinHeap ─── */
 
 class MinHeap {
-  constructor() { this.data = []; }
+  constructor() {
+    this.data = [];
+  }
 
   push(item) {
     this.data.push(item);
@@ -28,7 +35,9 @@ class MinHeap {
     return top;
   }
 
-  get size() { return this.data.length; }
+  get size() {
+    return this.data.length;
+  }
 
   _up(i) {
     while (i > 0) {
@@ -43,7 +52,8 @@ class MinHeap {
     const n = this.data.length;
     while (true) {
       let smallest = i;
-      const l = 2 * i + 1, r = 2 * i + 2;
+      const l = 2 * i + 1,
+        r = 2 * i + 2;
       if (l < n && this.data[l].cost < this.data[smallest].cost) smallest = l;
       if (r < n && this.data[r].cost < this.data[smallest].cost) smallest = r;
       if (smallest === i) break;
@@ -95,7 +105,8 @@ function getThresholdLevel(level, thresholds) {
 }
 
 function buildGearCache(equipSet, availableWeapons) {
-  const { atkThresholds, strThresholds, defThresholds } = collectThresholds(equipSet);
+  const { atkThresholds, strThresholds, defThresholds } =
+    collectThresholds(equipSet);
   const cache = new Map();
 
   for (const atkT of atkThresholds) {
@@ -110,7 +121,9 @@ function buildGearCache(equipSet, availableWeapons) {
 
           for (const style of weapon.styles) {
             const gear = solveBestGear({
-              weapon, style, levels,
+              weapon,
+              style,
+              levels,
               monster: DEFAULT_MONSTER,
               availableEquipment: equipSet,
             });
@@ -119,18 +132,24 @@ function buildGearCache(equipSet, availableWeapons) {
             const bonuses = sumGearBonuses(gear, attackType);
 
             let weaponAttackBonus = 0;
-            if (attackType === 'stab') weaponAttackBonus = weapon.attackStab || 0;
-            else if (attackType === 'slash') weaponAttackBonus = weapon.attackSlash || 0;
-            else if (attackType === 'crush') weaponAttackBonus = weapon.attackCrush || 0;
+            if (attackType === "stab")
+              weaponAttackBonus = weapon.attackStab || 0;
+            else if (attackType === "slash")
+              weaponAttackBonus = weapon.attackSlash || 0;
+            else if (attackType === "crush")
+              weaponAttackBonus = weapon.attackCrush || 0;
 
-            const countObs = Object.values(gear).filter(g => g && g.isObsidian).length;
+            const countObs = Object.values(gear).filter(
+              (g) => g && g.isObsidian,
+            ).length;
 
             entries.push({
               weapon,
               style,
               gear,
               equipAttackBonus: bonuses.attackBonus + weaponAttackBonus,
-              equipStrengthBonus: bonuses.strengthBonus + (weapon.strengthBonus || 0),
+              equipStrengthBonus:
+                bonuses.strengthBonus + (weapon.strengthBonus || 0),
               attackSpeed: weapon.attackSpeed,
               attackType,
               isObsidianSet: countObs >= 3,
@@ -160,7 +179,7 @@ function findBestSetupCached(skill, levels, gearCache) {
   let bestEntry = null;
 
   for (const entry of entries) {
-    if (entry.style.skill !== skill && entry.style.skill !== 'shared') continue;
+    if (entry.style.skill !== skill && entry.style.skill !== "shared") continue;
     if (!canEquipWeapon(entry.weapon, levels)) continue;
 
     const stats = calculateCombatStats({
@@ -177,13 +196,17 @@ function findBestSetupCached(skill, levels, gearCache) {
       isObsidianWeapon: entry.isObsidianWeapon,
     });
 
-    const effectiveXphr = entry.style.skill === 'shared'
-      ? stats.xpPerHour / 3
-      : stats.xpPerHour;
+    const effectiveXphr =
+      entry.style.skill === "shared" ? stats.xpPerHour / 3 : stats.xpPerHour;
 
     if (effectiveXphr > bestXphr) {
       bestXphr = effectiveXphr;
-      bestEntry = { ...entry, stats, xpPerHour: effectiveXphr, isShared: entry.style.skill === 'shared' };
+      bestEntry = {
+        ...entry,
+        stats,
+        xpPerHour: effectiveXphr,
+        isShared: entry.style.skill === "shared",
+      };
     }
   }
 
@@ -200,7 +223,7 @@ function findBestControlledCached(levels, gearCache) {
   let bestEntry = null;
 
   for (const entry of entries) {
-    if (entry.style.skill !== 'shared') continue;
+    if (entry.style.skill !== "shared") continue;
     if (!canEquipWeapon(entry.weapon, levels)) continue;
 
     const stats = calculateCombatStats({
@@ -220,7 +243,12 @@ function findBestControlledCached(levels, gearCache) {
     const perSkillXphr = stats.xpPerHour / 3;
     if (perSkillXphr > bestXphr) {
       bestXphr = perSkillXphr;
-      bestEntry = { ...entry, stats, xpPerHour: perSkillXphr, totalXpPerHour: stats.xpPerHour };
+      bestEntry = {
+        ...entry,
+        stats,
+        xpPerHour: perSkillXphr,
+        totalXpPerHour: stats.xpPerHour,
+      };
     }
   }
 
@@ -234,7 +262,15 @@ function findBestControlledCached(levels, gearCache) {
  * Advances all below-goal skills equally until fewer than 2 skills remain below goal.
  * Returns the accurate final levels and total training hours.
  */
-function simulateControlledBlock(startA, startS, startD, goalA, goalS, goalD, gearCache) {
+function simulateControlledBlock(
+  startA,
+  startS,
+  startD,
+  goalA,
+  goalS,
+  goalD,
+  gearCache,
+) {
   const simXp = {
     attack: xpForLevel(startA),
     strength: xpForLevel(startS),
@@ -250,7 +286,7 @@ function simulateControlledBlock(startA, startS, startD, goalA, goalS, goalD, ge
       defence: levelForXp(simXp.defence),
     };
 
-    const advancing = SKILLS.filter(sk => simLevels[sk] < goals[sk]);
+    const advancing = SKILLS.filter((sk) => simLevels[sk] < goals[sk]);
     if (advancing.length < 2) break;
 
     // Bottleneck: skill needing the most XP to reach its next level from current XP
@@ -271,9 +307,7 @@ function simulateControlledBlock(startA, startS, startD, goalA, goalS, goalD, ge
   }
 
   // Finish the remaining skill with single-skill training (carry-over aware)
-  const remaining = SKILLS.filter(sk =>
-    levelForXp(simXp[sk]) < goals[sk]
-  );
+  const remaining = SKILLS.filter((sk) => levelForXp(simXp[sk]) < goals[sk]);
 
   if (remaining.length === 1) {
     const sk = remaining[0];
@@ -307,15 +341,20 @@ function simulateControlledBlock(startA, startS, startD, goalA, goalS, goalD, ge
 /* ─── 3D Dijkstra ─── */
 
 function dijkstra(startLevels, goalLevels, gearCache) {
-  const sa = startLevels.attack, ss = startLevels.strength, sd = startLevels.defence;
-  const ga = goalLevels.attack, gs = goalLevels.strength, gd = goalLevels.defence;
+  const sa = startLevels.attack,
+    ss = startLevels.strength,
+    sd = startLevels.defence;
+  const ga = goalLevels.attack,
+    gs = goalLevels.strength,
+    gd = goalLevels.defence;
 
   const sizeA = ga - sa + 1;
   const sizeS = gs - ss + 1;
   const sizeD = gd - sd + 1;
   const totalStates = sizeA * sizeS * sizeD;
 
-  const idx = (a, s, d) => (a - sa) * sizeS * sizeD + (s - ss) * sizeD + (d - sd);
+  const idx = (a, s, d) =>
+    (a - sa) * sizeS * sizeD + (s - ss) * sizeD + (d - sd);
 
   const dist = new Float64Array(totalStates);
   dist.fill(Infinity);
@@ -343,7 +382,7 @@ function dijkstra(startLevels, goalLevels, gearCache) {
 
     // Transition 1: Train attack (a -> a+1)
     if (a < ga) {
-      const setup = findBestSetupCached('attack', levels, gearCache);
+      const setup = findBestSetupCached("attack", levels, gearCache);
       if (setup && setup.xpPerHour > 0) {
         const xpNeeded = xpForLevel(a + 1) - xpForLevel(a);
         const edgeCost = xpNeeded / setup.xpPerHour;
@@ -359,7 +398,7 @@ function dijkstra(startLevels, goalLevels, gearCache) {
 
     // Transition 2: Train strength (s -> s+1)
     if (s < gs) {
-      const setup = findBestSetupCached('strength', levels, gearCache);
+      const setup = findBestSetupCached("strength", levels, gearCache);
       if (setup && setup.xpPerHour > 0) {
         const xpNeeded = xpForLevel(s + 1) - xpForLevel(s);
         const edgeCost = xpNeeded / setup.xpPerHour;
@@ -375,7 +414,7 @@ function dijkstra(startLevels, goalLevels, gearCache) {
 
     // Transition 3: Train defence (d -> d+1)
     if (d < gd) {
-      const setup = findBestSetupCached('defence', levels, gearCache);
+      const setup = findBestSetupCached("defence", levels, gearCache);
       if (setup && setup.xpPerHour > 0) {
         const xpNeeded = xpForLevel(d + 1) - xpForLevel(d);
         const edgeCost = xpNeeded / setup.xpPerHour;
@@ -392,9 +431,9 @@ function dijkstra(startLevels, goalLevels, gearCache) {
     // Transition 4: Controlled block — simulate full controlled training with XP carry-over
     // This avoids the cumulative carry-over loss that per-step controlled transitions suffer.
     const advancing = [];
-    if (a < ga) advancing.push('attack');
-    if (s < gs) advancing.push('strength');
-    if (d < gd) advancing.push('defence');
+    if (a < ga) advancing.push("attack");
+    if (s < gs) advancing.push("strength");
+    if (d < gd) advancing.push("defence");
 
     if (advancing.length >= 2) {
       const block = simulateControlledBlock(a, s, d, ga, gs, gd, gearCache);
@@ -417,12 +456,22 @@ function dijkstra(startLevels, goalLevels, gearCache) {
   if (dist[goalIdx] === Infinity) return null;
 
   const path = [];
-  let ca = ga, cs = gs, cd = gd;
+  let ca = ga,
+    cs = gs,
+    cd = gd;
 
   while (ca !== sa || cs !== ss || cd !== sd) {
     const ci = idx(ca, cs, cd);
     const [pa, ps, pd, type] = prev[ci];
-    path.push({ fromA: pa, fromS: ps, fromD: pd, toA: ca, toS: cs, toD: cd, type });
+    path.push({
+      fromA: pa,
+      fromS: ps,
+      fromD: pd,
+      toA: ca,
+      toS: cs,
+      toD: cd,
+      type,
+    });
     ca = pa;
     cs = ps;
     cd = pd;
@@ -442,7 +491,7 @@ function pathToSteps(path, startLevels, goalLevels, gearCache) {
   };
   const simLevels = { ...startLevels };
   const rawSteps = [];
-  const TRANSITION_SKILLS = ['attack', 'strength', 'defence'];
+  const TRANSITION_SKILLS = ["attack", "strength", "defence"];
 
   for (const edge of path) {
     if (edge.type === 3) {
@@ -450,7 +499,7 @@ function pathToSteps(path, startLevels, goalLevels, gearCache) {
       const goals = { attack: edge.toA, strength: edge.toS, defence: edge.toD };
 
       while (true) {
-        const advancing = SKILLS.filter(sk => simLevels[sk] < goals[sk]);
+        const advancing = SKILLS.filter((sk) => simLevels[sk] < goals[sk]);
         if (advancing.length < 2) break;
 
         const levels = { ...simLevels };
@@ -489,7 +538,7 @@ function pathToSteps(path, startLevels, goalLevels, gearCache) {
         }
 
         rawSteps.push({
-          skill: 'shared',
+          skill: "shared",
           fromLevel: fromLevels[primarySkill],
           toLevel: toLevels[primarySkill],
           fromLevels,
@@ -505,12 +554,12 @@ function pathToSteps(path, startLevels, goalLevels, gearCache) {
           maxHit: controlled.stats.maxHit,
           accuracy: controlled.stats.accuracy,
           dps: controlled.stats.dps,
-          _key: setupKey('shared', controlled),
+          _key: setupKey("shared", controlled),
         });
       }
 
       // Generate steps for the remaining single skill (matching the extended block)
-      const postRemaining = SKILLS.filter(sk => simLevels[sk] < goals[sk]);
+      const postRemaining = SKILLS.filter((sk) => simLevels[sk] < goals[sk]);
       if (postRemaining.length === 1) {
         const sk = postRemaining[0];
 
@@ -547,7 +596,11 @@ function pathToSteps(path, startLevels, goalLevels, gearCache) {
       }
     } else {
       // Single-skill transition
-      const levels = { attack: edge.fromA, strength: edge.fromS, defence: edge.fromD };
+      const levels = {
+        attack: edge.fromA,
+        strength: edge.fromS,
+        defence: edge.fromD,
+      };
       const skill = TRANSITION_SKILLS[edge.type];
       const setup = findBestSetupCached(skill, levels, gearCache);
       if (!setup) continue;
@@ -592,16 +645,15 @@ function pathToSteps(path, startLevels, goalLevels, gearCache) {
 
 /* ─── Main Optimizer ─── */
 
-export function optimize({
-  currentLevels,
-  goalLevels,
-  availableEquipment,
-}) {
+export function optimize({ currentLevels, goalLevels, availableEquipment }) {
   const equipSet = new Set(availableEquipment);
-  const availableWeapons = weapons.filter(w => equipSet.has(w.name));
+  const availableWeapons = weapons.filter((w) => equipSet.has(w.name));
 
   if (availableWeapons.length === 0) {
-    return { steps: [], error: 'No weapons selected. Please select at least one weapon.' };
+    return {
+      steps: [],
+      error: "No weapons selected. Please select at least one weapon.",
+    };
   }
 
   // Clamp: if any goal <= current, set goal = current (no training needed)
@@ -612,10 +664,18 @@ export function optimize({
   };
 
   // Nothing to train
-  if (effectiveGoals.attack === currentLevels.attack &&
-      effectiveGoals.strength === currentLevels.strength &&
-      effectiveGoals.defence === currentLevels.defence) {
-    return { steps: [], totalHours: 0, totalXp: { attack: 0, strength: 0, defence: 0 }, finalLevels: { ...currentLevels }, error: null };
+  if (
+    effectiveGoals.attack === currentLevels.attack &&
+    effectiveGoals.strength === currentLevels.strength &&
+    effectiveGoals.defence === currentLevels.defence
+  ) {
+    return {
+      steps: [],
+      totalHours: 0,
+      totalXp: { attack: 0, strength: 0, defence: 0 },
+      finalLevels: { ...currentLevels },
+      error: null,
+    };
   }
 
   const gearCache = buildGearCache(equipSet, availableWeapons);
@@ -624,11 +684,17 @@ export function optimize({
   if (!result) {
     return {
       steps: [],
-      error: 'Cannot find any valid training setup. Make sure you have selected at least one weapon with a style that trains your remaining skills.',
+      error:
+        "Cannot find any valid training setup. Make sure you have selected at least one weapon with a style that trains your remaining skills.",
     };
   }
 
-  const { rawSteps, simXp, simLevels } = pathToSteps(result.path, currentLevels, effectiveGoals, gearCache);
+  const { rawSteps, simXp, simLevels } = pathToSteps(
+    result.path,
+    currentLevels,
+    effectiveGoals,
+    gearCache,
+  );
   const steps = mergeSteps(rawSteps);
 
   const totalHours = steps.reduce((sum, s) => sum + s.hours, 0);
@@ -659,8 +725,8 @@ function formatGear(gear) {
 
 function setupKey(skill, setup) {
   const gearNames = Object.values(setup.gear)
-    .map(item => item ? (item.name || item) : '')
-    .join(',');
+    .map((item) => (item ? item.name || item : ""))
+    .join(",");
   return `${skill}|${setup.weapon.name || setup.weapon}|${setup.style.name || setup.style}|${gearNames}`;
 }
 

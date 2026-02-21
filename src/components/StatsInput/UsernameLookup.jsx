@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useHiscores } from '../../hooks/useHiscores.js';
+import { useState } from "react";
+import { useHiscores } from "../../hooks/useHiscores.js";
 
 export default function UsernameLookup({ onImport }) {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
   const [pendingData, setPendingData] = useState(null);
   const { lookup, loading, error } = useHiscores();
 
@@ -17,7 +17,7 @@ export default function UsernameLookup({ onImport }) {
     if (pendingData) {
       onImport(pendingData);
       setPendingData(null);
-      setUsername('');
+      setUsername("");
     }
   };
 
@@ -26,7 +26,7 @@ export default function UsernameLookup({ onImport }) {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleLookup();
+    if (e.key === "Enter") handleLookup();
   };
 
   return (
@@ -41,18 +41,23 @@ export default function UsernameLookup({ onImport }) {
           className="lookup-input"
         />
         <button onClick={handleLookup} disabled={loading || !username.trim()}>
-          {loading ? 'Loading...' : 'Lookup'}
+          {loading ? "Loading..." : "Lookup"}
         </button>
       </div>
       {error && <p className="lookup-error">{error}</p>}
       {pendingData && (
         <div className="lookup-confirm">
           <p className="lookup-result">
-            Atk: {pendingData.attack} / Str: {pendingData.strength} / Def: {pendingData.defence}
+            Atk: {pendingData.attack} / Str: {pendingData.strength} / Def:{" "}
+            {pendingData.defence}
           </p>
           <div className="lookup-actions">
-            <button className="btn-confirm" onClick={handleConfirm}>Import</button>
-            <button className="btn-cancel" onClick={handleCancel}>Cancel</button>
+            <button className="btn-confirm" onClick={handleConfirm}>
+              Import
+            </button>
+            <button className="btn-cancel" onClick={handleCancel}>
+              Cancel
+            </button>
           </div>
         </div>
       )}

@@ -4,17 +4,17 @@
 
 export function effectiveLevel(baseLevel, stance) {
   let stanceBonus = 0;
-  if (stance === 'accurate') stanceBonus = 3;
-  else if (stance === 'controlled') stanceBonus = 1;
-  else if (stance === 'aggressive') stanceBonus = 3;
+  if (stance === "accurate") stanceBonus = 3;
+  else if (stance === "controlled") stanceBonus = 1;
+  else if (stance === "aggressive") stanceBonus = 3;
 
   return Math.floor(baseLevel * 1.0) + stanceBonus + 8;
 }
 
 export function effectiveStrength(baseLevel, stance) {
   let stanceBonus = 0;
-  if (stance === 'aggressive') stanceBonus = 3;
-  else if (stance === 'controlled') stanceBonus = 1;
+  if (stance === "aggressive") stanceBonus = 3;
+  else if (stance === "controlled") stanceBonus = 1;
 
   return Math.floor(baseLevel * 1.0) + stanceBonus + 8;
 }
@@ -35,12 +35,12 @@ export function accuracy(attackRoll, defenceRoll) {
 }
 
 export function maxHit(effStrength, equipStrengthBonus) {
-  return Math.floor(0.5 + effStrength * (equipStrengthBonus + 64) / 640);
+  return Math.floor(0.5 + (effStrength * (equipStrengthBonus + 64)) / 640);
 }
 
 export function dps(hitAccuracy, maxHitValue, attackSpeed) {
   const tickSeconds = attackSpeed * 0.6;
-  return hitAccuracy * (maxHitValue / 2) / tickSeconds;
+  return (hitAccuracy * (maxHitValue / 2)) / tickSeconds;
 }
 
 /**
@@ -59,13 +59,11 @@ export function xpPerHour(hitAccuracy, maxHitValue, attackSpeed, monsterHp) {
     return dpsValue * 4 * 3600;
   }
 
-  const avgAttacksToKill = avgDmgPerAttack > 0
-    ? Math.ceil(monsterHp / avgDmgPerAttack)
-    : Infinity;
+  const avgAttacksToKill =
+    avgDmgPerAttack > 0 ? Math.ceil(monsterHp / avgDmgPerAttack) : Infinity;
 
-  const killsPerHour = avgAttacksToKill > 0
-    ? 3600 / (avgAttacksToKill * tickSeconds)
-    : 0;
+  const killsPerHour =
+    avgAttacksToKill > 0 ? 3600 / (avgAttacksToKill * tickSeconds) : 0;
 
   const xpPerKill = monsterHp * 4;
 
@@ -96,20 +94,20 @@ export function calculateCombatStats({
 
   // Obsidian set bonus: +10% accuracy and damage with obsidian weapons
   if (isObsidianSet && isObsidianWeapon) {
-    atkRoll = Math.floor(atkRoll * 1.10);
-    mh = Math.floor(mh * 1.10);
+    atkRoll = Math.floor(atkRoll * 1.1);
+    mh = Math.floor(mh * 1.1);
   }
 
   // Berserker necklace: +20% damage with obsidian weapons
   if (hasBerserkerNecklace && isObsidianWeapon) {
-    mh = Math.floor(mh * 1.20);
+    mh = Math.floor(mh * 1.2);
   }
 
   // Select the correct monster defence bonus based on attack type
   let monsterDefBonus = 0;
-  if (attackType === 'stab') monsterDefBonus = monster.defenceStab;
-  else if (attackType === 'slash') monsterDefBonus = monster.defenceSlash;
-  else if (attackType === 'crush') monsterDefBonus = monster.defenceCrush;
+  if (attackType === "stab") monsterDefBonus = monster.defenceStab;
+  else if (attackType === "slash") monsterDefBonus = monster.defenceSlash;
+  else if (attackType === "crush") monsterDefBonus = monster.defenceCrush;
 
   const defRoll = maxDefenceRoll(monster.defenceLevel, monsterDefBonus);
   const acc = accuracy(atkRoll, defRoll);

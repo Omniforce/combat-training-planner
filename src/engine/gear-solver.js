@@ -1,14 +1,24 @@
-import armorData from '../data/armor.json';
-import { calculateCombatStats } from './combat.js';
+import armorData from "../data/armor.json";
+import { calculateCombatStats } from "./combat.js";
 
-const SLOTS = ['head', 'body', 'legs', 'boots', 'gloves', 'cape', 'neck', 'ring', 'shield'];
+const SLOTS = [
+  "head",
+  "body",
+  "legs",
+  "boots",
+  "gloves",
+  "cape",
+  "neck",
+  "ring",
+  "shield",
+];
 
 /**
  * Filter items in a slot by level requirements and available equipment.
  */
 function getAvailableItems(slot, levels, availableEquipment) {
   const items = armorData[slot] || [];
-  return items.filter(item => {
+  return items.filter((item) => {
     if (!availableEquipment.has(item.name)) return false;
     const reqs = item.requirements || {};
     for (const [skill, reqLevel] of Object.entries(reqs)) {
@@ -49,9 +59,9 @@ export function sumGearBonuses(gear, attackType) {
 
   for (const item of Object.values(gear)) {
     if (!item) continue;
-    if (attackType === 'stab') attackBonus += item.attackStab || 0;
-    else if (attackType === 'slash') attackBonus += item.attackSlash || 0;
-    else if (attackType === 'crush') attackBonus += item.attackCrush || 0;
+    if (attackType === "stab") attackBonus += item.attackStab || 0;
+    else if (attackType === "slash") attackBonus += item.attackSlash || 0;
+    else if (attackType === "crush") attackBonus += item.attackCrush || 0;
     strengthBonus += item.strengthBonus || 0;
   }
 
@@ -74,7 +84,7 @@ export function solveBestGear({
 
   // First pass: pick best item per slot independently based on offensive contribution
   for (const slot of SLOTS) {
-    if (slot === 'shield' && weapon.twoHanded) {
+    if (slot === "shield" && weapon.twoHanded) {
       gear[slot] = null;
       continue;
     }
@@ -94,9 +104,11 @@ export function solveBestGear({
 
       // Add weapon bonuses
       let weaponAttackBonus = 0;
-      if (attackType === 'stab') weaponAttackBonus = weapon.attackStab || 0;
-      else if (attackType === 'slash') weaponAttackBonus = weapon.attackSlash || 0;
-      else if (attackType === 'crush') weaponAttackBonus = weapon.attackCrush || 0;
+      if (attackType === "stab") weaponAttackBonus = weapon.attackStab || 0;
+      else if (attackType === "slash")
+        weaponAttackBonus = weapon.attackSlash || 0;
+      else if (attackType === "crush")
+        weaponAttackBonus = weapon.attackCrush || 0;
 
       const totalAttack = bonuses.attackBonus + weaponAttackBonus;
       const totalStrength = bonuses.strengthBonus + (weapon.strengthBonus || 0);
@@ -135,20 +147,14 @@ export function solveBestGear({
 /**
  * Evaluate a full weapon + style + gear + monster setup.
  */
-export function evaluateSetup({
-  weapon,
-  style,
-  gear,
-  levels,
-  monster,
-}) {
+export function evaluateSetup({ weapon, style, gear, levels, monster }) {
   const attackType = style.type;
   const bonuses = sumGearBonuses(gear, attackType);
 
   let weaponAttackBonus = 0;
-  if (attackType === 'stab') weaponAttackBonus = weapon.attackStab || 0;
-  else if (attackType === 'slash') weaponAttackBonus = weapon.attackSlash || 0;
-  else if (attackType === 'crush') weaponAttackBonus = weapon.attackCrush || 0;
+  if (attackType === "stab") weaponAttackBonus = weapon.attackStab || 0;
+  else if (attackType === "slash") weaponAttackBonus = weapon.attackSlash || 0;
+  else if (attackType === "crush") weaponAttackBonus = weapon.attackCrush || 0;
 
   const totalAttack = bonuses.attackBonus + weaponAttackBonus;
   const totalStrength = bonuses.strengthBonus + (weapon.strengthBonus || 0);

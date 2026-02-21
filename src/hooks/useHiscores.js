@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
-const CORS_PROXY = 'https://corsproxy.io/?';
-const HISCORES_URL = 'https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player=';
+const CORS_PROXY = "https://corsproxy.io/?";
+const HISCORES_URL =
+  "https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player=";
 
 // Skill indices in the hiscores response
 const SKILL_INDICES = {
@@ -12,12 +13,12 @@ const SKILL_INDICES = {
 };
 
 function parseHiscores(csv) {
-  const lines = csv.trim().split('\n');
+  const lines = csv.trim().split("\n");
   const skills = {};
 
   for (const [name, index] of Object.entries(SKILL_INDICES)) {
     if (index < lines.length) {
-      const parts = lines[index].split(',');
+      const parts = lines[index].split(",");
       // Format: rank,level,xp
       const level = parseInt(parts[1]);
       if (!isNaN(level) && level >= 1) {
@@ -36,7 +37,7 @@ export function useHiscores() {
 
   const lookup = useCallback(async (username) => {
     if (!username || !username.trim()) {
-      setError('Please enter a username');
+      setError("Please enter a username");
       return null;
     }
 
@@ -51,16 +52,16 @@ export function useHiscores() {
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error('Player not found');
+          throw new Error("Player not found");
         }
-        throw new Error('Failed to fetch hiscores');
+        throw new Error("Failed to fetch hiscores");
       }
 
       const text = await response.text();
       const skills = parseHiscores(text);
 
       if (!skills.attack) {
-        throw new Error('Could not parse hiscores data');
+        throw new Error("Could not parse hiscores data");
       }
 
       const result = {

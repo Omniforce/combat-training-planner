@@ -1,5 +1,5 @@
 export function formatTime(hours) {
-  if (!hours || hours <= 0) return '0m';
+  if (!hours || hours <= 0) return "0m";
   const h = Math.floor(hours);
   const m = Math.round((hours - h) * 60);
   if (h === 0) return `${m}m`;
@@ -8,7 +8,7 @@ export function formatTime(hours) {
 }
 
 export function formatNumber(n) {
-  if (n == null) return '0';
+  if (n == null) return "0";
   return Math.round(n).toLocaleString();
 }
 
@@ -17,6 +17,6 @@ export function formatPercent(decimal) {
 }
 
 export function capitalize(str) {
-  if (!str) return '';
+  if (!str) return "";
   return str.charAt(0).toUpperCase() + str.slice(1);
 }

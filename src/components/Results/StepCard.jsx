@@ -1,36 +1,61 @@
-import { formatTime, formatNumber, formatPercent, capitalize } from '../../utils/format.js';
-import GearLoadout from './GearLoadout.jsx';
+import {
+  formatTime,
+  formatNumber,
+  formatPercent,
+  capitalize,
+} from "../../utils/format.js";
+import GearLoadout from "./GearLoadout.jsx";
 
 const SKILL_COLORS = {
-  attack: 'var(--skill-attack)',
-  strength: 'var(--skill-strength)',
-  defence: 'var(--skill-defence)',
-  shared: 'var(--skill-shared)',
+  attack: "var(--skill-attack)",
+  strength: "var(--skill-strength)",
+  defence: "var(--skill-defence)",
+  shared: "var(--skill-shared)",
 };
 
 export default function StepCard({ step, index, prevStep }) {
-  const styleChanged = prevStep && step.weapon === prevStep.weapon && (step.style !== prevStep.style || step.stance !== prevStep.stance);
+  const styleChanged =
+    prevStep &&
+    step.weapon === prevStep.weapon &&
+    (step.style !== prevStep.style || step.stance !== prevStep.stance);
 
   return (
     <div className="step-card">
       <div className="step-header">
         <span className="step-number">Step {index + 1}</span>
         <span className="step-weapon">{step.weapon}</span>
-        <span className={`step-stance${styleChanged ? ' style-changed has-tooltip' : ''}`} data-tooltip={styleChanged ? 'Changed since previous step' : undefined}>{step.style} ({capitalize(step.stance)})</span>
+        <span
+          className={`step-stance${styleChanged ? " style-changed has-tooltip" : ""}`}
+          data-tooltip={
+            styleChanged ? "Changed since previous step" : undefined
+          }
+        >
+          {step.style} ({capitalize(step.stance)})
+        </span>
         <span className="step-time">{formatTime(step.hours)}</span>
       </div>
       <div className="step-details">
         <div className="step-info">
           <div className="step-row">
             <span className="detail-label">Training:</span>
-            {step.skill === 'shared' && step.advancingSkills ? (
-              <span className="step-skill" style={{ color: SKILL_COLORS.shared }}>
-                Controlled: {step.advancingSkills.map(sk =>
-                  `${capitalize(sk)} ${step.fromLevels[sk]} → ${step.toLevels[sk]}`
-                ).join(' & ')}
+            {step.skill === "shared" && step.advancingSkills ? (
+              <span
+                className="step-skill"
+                style={{ color: SKILL_COLORS.shared }}
+              >
+                Controlled:{" "}
+                {step.advancingSkills
+                  .map(
+                    (sk) =>
+                      `${capitalize(sk)} ${step.fromLevels[sk]} → ${step.toLevels[sk]}`,
+                  )
+                  .join(" & ")}
               </span>
             ) : (
-              <span className="step-skill" style={{ color: SKILL_COLORS[step.skill] }}>
+              <span
+                className="step-skill"
+                style={{ color: SKILL_COLORS[step.skill] }}
+              >
                 {capitalize(step.skill)} {step.fromLevel} &rarr; {step.toLevel}
               </span>
             )}
@@ -52,7 +77,12 @@ export default function StepCard({ step, index, prevStep }) {
             <span>{formatPercent(step.accuracy)}</span>
           </div>
         </div>
-        <GearLoadout gear={step.gear} weapon={step.weapon} prevGear={prevStep?.gear} prevWeapon={prevStep?.weapon} />
+        <GearLoadout
+          gear={step.gear}
+          weapon={step.weapon}
+          prevGear={prevStep?.gear}
+          prevWeapon={prevStep?.weapon}
+        />
       </div>
     </div>
   );

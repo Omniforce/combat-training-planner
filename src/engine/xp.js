@@ -1,4 +1,4 @@
-import xpTable from '../data/xp-table.json';
+import xpTable from "../data/xp-table.json";
 
 export function xpForLevel(level) {
   if (level < 1) return 0;

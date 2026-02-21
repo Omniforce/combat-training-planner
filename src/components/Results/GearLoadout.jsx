@@ -1,15 +1,33 @@
-const SLOT_ORDER = ['head', 'neck', 'cape', 'body', 'legs', 'shield', 'gloves', 'boots', 'ring'];
+const SLOT_ORDER = [
+  "head",
+  "neck",
+  "cape",
+  "body",
+  "legs",
+  "shield",
+  "gloves",
+  "boots",
+  "ring",
+];
 
 export default function GearLoadout({ gear, weapon, prevGear, prevWeapon }) {
   const items = [];
 
   if (weapon) {
-    items.push({ slot: 'weapon', name: weapon, changed: prevWeapon != null && weapon !== prevWeapon });
+    items.push({
+      slot: "weapon",
+      name: weapon,
+      changed: prevWeapon != null && weapon !== prevWeapon,
+    });
   }
 
   for (const slot of SLOT_ORDER) {
     if (gear[slot]) {
-      items.push({ slot, name: gear[slot], changed: prevGear ? gear[slot] !== prevGear[slot] : false });
+      items.push({
+        slot,
+        name: gear[slot],
+        changed: prevGear ? gear[slot] !== prevGear[slot] : false,
+      });
     }
   }
 
@@ -18,7 +36,11 @@ export default function GearLoadout({ gear, weapon, prevGear, prevWeapon }) {
   return (
     <div className="gear-loadout">
       {items.map(({ slot, name, changed }) => (
-        <span key={slot} className={`gear-piece${changed ? ' gear-changed has-tooltip' : ''}`} data-tooltip={changed ? 'Changed since previous step' : undefined}>
+        <span
+          key={slot}
+          className={`gear-piece${changed ? " gear-changed has-tooltip" : ""}`}
+          data-tooltip={changed ? "Changed since previous step" : undefined}
+        >
           {name}
         </span>
       ))}

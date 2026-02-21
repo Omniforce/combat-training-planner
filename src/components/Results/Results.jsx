@@ -1,20 +1,26 @@
-import Summary from './Summary.jsx';
-import StepCard from './StepCard.jsx';
-import './Results.css';
+import Summary from "./Summary.jsx";
+import StepCard from "./StepCard.jsx";
+import "./Results.css";
 
-export default function Results({ result, onCalculate, calculating, disabled }) {
+export default function Results({
+  result,
+  onCalculate,
+  calculating,
+  disabled,
+}) {
   if (!result) {
     return (
       <div className="section-card results-empty">
         <p className="results-empty-text">
-          Set your combat levels and equipment, then calculate to find the optimal training path.
+          Set your combat levels and equipment, then calculate to find the
+          optimal training path.
         </p>
         <button
           className="calculate-btn"
           onClick={onCalculate}
           disabled={disabled || calculating}
         >
-          {calculating ? 'Calculating...' : 'Calculate Optimal Path'}
+          {calculating ? "Calculating..." : "Calculate Optimal Path"}
         </button>
       </div>
     );
@@ -26,7 +32,7 @@ export default function Results({ result, onCalculate, calculating, disabled }) 
       onClick={onCalculate}
       disabled={calculating}
     >
-      {calculating ? 'Calculating...' : 'Recalculate'}
+      {calculating ? "Calculating..." : "Recalculate"}
     </button>
   );
 
@@ -59,7 +65,12 @@ export default function Results({ result, onCalculate, calculating, disabled }) 
       <Summary result={result} />
       <div className="steps-list">
         {result.steps.map((step, i) => (
-          <StepCard key={i} step={step} index={i} prevStep={i > 0 ? result.steps[i - 1] : null} />
+          <StepCard
+            key={i}
+            step={step}
+            index={i}
+            prevStep={i > 0 ? result.steps[i - 1] : null}
+          />
         ))}
       </div>
     </div>
